@@ -8,12 +8,14 @@
             [app.players :as players]
             [app.representation :as reps]
             [app.ctl :as ctl]
+            [cljsjs.jquery-ui]
             [cljs.core.async :refer [chan mult tap <!]]
             [dragonmark.web.core :as dw :refer [xf xform]])
   (:use [domina.css :only [sel]]
         [domina.events :only [listen! target]])
   (:require-macros [app.templates :refer [deftmpl]]
                    [cljs.core.async.macros :refer [go]]))
+
 
 (enable-console-print!)
 

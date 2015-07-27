@@ -8,6 +8,7 @@
                  [reagent "0.5.0"]
                  [domina "1.0.3"]
                  [dragonmark/web "0.1.7"]
+                 [cljsjs/jquery-ui "1.11.3-1"]
                  [boot-cljs-test/node-runner "0.1.0" :scope "test"]
                  [org.clojure/clojurescript "0.0-3165" ]
                  [pandeiro/boot-http    "0.3.0"      :scope "test"]])
