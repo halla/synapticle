@@ -8,6 +8,11 @@ body { font-size: 20px; font-family: 'Open Sans', sans-serif; }
 #screen {  position:absolute; top:0;bottom:0;left:0;right:0; overflow: hidden;}
 #controls { position:absolute; left: 10%; top: 10%; background: #ddd; }
 #control-panel { padding: 15px; border: 1px solid #bbb;}
+#control-panel.running .glyphicon-play { color: #aaa; }
+#control-panel.running .glyphicon-pause { color: #000; }
+#control-panel.stopped .glyphicon-play { color: #000; }
+#control-panel.stopped .glyphicon-pause { color: #aaa; }
+
 #play-state { font-style: italic; }
 
 #controls .form-group { margin-bottom: 10px; }

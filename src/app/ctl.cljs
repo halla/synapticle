@@ -1,8 +1,6 @@
 (ns app.ctl
   (:require [cljs.core.async :refer [put! chan <! mult tap]]
             [dragonmark.web.core :as dw :refer [xf xform]])
-  (:use [domina.events :only [listen! target]]
-        [domina.css :only [sel]])
   (:require-macros [app.templates :refer [deftmpl]]
                    [cljs.core.async.macros :refer [go]]))
 
@@ -53,7 +51,8 @@
   (when true
     (xform ctl-tpl 
            ["#control-panel" {:style (display? controls-visible?)}]
-           ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)}]
+           ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
+           ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#play-state" (playstates @playstate)]           
            ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
            ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
