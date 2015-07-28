@@ -4,6 +4,9 @@
   (:require-macros [app.templates :refer [deftmpl]]
                    [cljs.core.async.macros :refer [go]]))
 
+(defn reload-hook []
+  (println "RELOAD CTL")
+)
 (defn start [eventbus-in]
   (put! eventbus-in :start))
 
@@ -39,6 +42,7 @@
   (if @visible?
     "display: block;"
     "display: none;"))
+
 
 (defn control-panel [eventbus-in
                      playstate

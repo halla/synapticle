@@ -21,6 +21,7 @@
 
 (defn main []
   "Called on code reload"
+  (reagent.core/flush)
   (println "RELOAD"))
 
 (def eventbus-in (chan))
@@ -57,7 +58,9 @@
 (defn get-player []  
   (playmodes @playmode))
 
+
 (defn mount-root []
+
   (reagent/render [ctl/control-panel eventbus-in
                    playstate
                    playstates
@@ -66,7 +69,10 @@
                    config
                    randomize?
                    ] (.getElementById js/document "controls"))
+  (reagent/render [importer/textfield-component words]
+                  (.getElementById js/document "wordinputs"))
   (reagent/render [player/render (get-player)] (.getElementById js/document "screen")))
+
 
 
 (defn start []
@@ -100,5 +106,7 @@
             (= e :textarea-import) (importer/textarea-import words))
           (recur)))))
 
-(listen! (sel "#screen") :click (fn [evt] (reset! controls-visible? (not @controls-visible?))))
+(listen! (sel "#screen") :click 
+         (fn [evt]
+           (reset! controls-visible? (not @controls-visible?))))
 (restart)

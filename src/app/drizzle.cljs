@@ -7,10 +7,8 @@
   (reify 
     player/Player
     (step-fwd [_]
-      (println "FWD")
       (swap! layout #(conj % (screen/gen-item (@data (rand-int (count @data)))))))
     (step-rnd [_]
-      (println "RND")
       (swap! layout #(conj % (screen/gen-item (@data (rand-int (count @data)))))))
     (animation [_] (reps/fade-screen! layout))
     (render [_]

@@ -13,6 +13,7 @@ body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; 
 #control-panel.stopped .glyphicon-play { color: #000; }
 #control-panel.stopped .glyphicon-pause { color: #bbb; }
 
+#wordinputs input { border: none; font-size: 20px; }
 #play-state { font-style: italic; }
 
 #controls .form-group { margin-bottom: 10px; }
