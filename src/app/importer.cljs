@@ -3,8 +3,6 @@
 
 
 (defn tokenize-content []
-#_(js/alert "jup")
-
   (concat (vec (for [page js/content]                 
                  (.split page ". ")
                  ))))
@@ -15,7 +13,7 @@
     (reset! words (js->clj ws))))
 
 
-
+;; single word input field
 
 (defonce nextword (atom ""))
 
@@ -35,5 +33,4 @@
   [:input {:type "text" 
            :value @nextword
            :on-change #(reset! nextword (-> % .-target .-value))
-           :on-key-down (keydownhandler wordstore @nextword)
-           }])
+           :on-key-down (keydownhandler wordstore @nextword)}])

@@ -39,9 +39,6 @@
 ;  "Data model"
   (atom ["ClojureScript" "In the browser" "Review your notes" "Generate random associations" "Preview text materials" "React" "Reagent"]))
 
-(defonce divs 
- ; "Internal representation of the screen"
-  (atom []))
 
 (defonce controls-visible? (atom true))
 
@@ -49,11 +46,12 @@
                  :running "Running"})
 (defonce playstate (atom :stopped))
 
-(def playmodes {"drizzle" (drizzle/drizzle words divs)
-                "pairs" (pairs/pairs words divs)
-                "single" (players/single words divs)})
+(def playmodes {"drizzle" (drizzle/drizzle words screen/divs)
+                "pairs" (pairs/pairs words screen/divs)
+                "single" (players/single words screen/divs)})
 (defonce playmode (atom "drizzle"))
 (defonce randomize? (atom true))
+
 
 (defn get-player []  
   (playmodes @playmode))
