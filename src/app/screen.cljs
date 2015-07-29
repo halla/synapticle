@@ -8,6 +8,10 @@
 
 (def  colors [ "black", "darkblue", "darkred", "darkgreen", "darkolivegreen", "#555", "darkorange" ])
 
+
+(defn clear []
+  (reset! divs []))
+
 (defn collides? [div1 div2]
   ;; todo, replace naive guess with something less naive
   (or (< (Math/abs (- (:y div1) (:y div2))) 100)

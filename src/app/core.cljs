@@ -84,8 +84,13 @@
   (js/clearInterval @animation-timer )
   (reset! playstate :stopped))
 
+(defn clear-all []
+  (reset! words [])
+  (screen/clear))
+
 (defn restart []
   (println "RESTART" @randomize?)
+  (screen/clear)
   (mount-root)
   (stop)
   (start))
@@ -98,7 +103,7 @@
             (= e :start) (start)
             (= e :stop) (stop)
             (= e :restart) (restart)
-            (= e :clear) (reset! words [])
+            (= e :clear) (clear-all)
             (= e :textarea-import) (importer/textarea-import words))
           (recur)))))
 
