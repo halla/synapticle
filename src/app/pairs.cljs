@@ -7,8 +7,15 @@
 (def index (atom 0))
 
 (defn get-combination [list] 
-  (let [get-item #(list (rand-int (count list)))]
-    [(get-item) (get-item)]))
+  (if (< (count list) 2)
+    ["Add" "items"]
+    (let [get-item #(list (rand-int (count list)))
+          item1 (get-item)]
+      (loop [trials 100]
+        (let [item2 (get-item)]
+          (if (= item1 item2)
+            (recur (dec trials))
+            [(get-item) (get-item)]))))))
 
 (defn pairs [data presentation]
   (reify
