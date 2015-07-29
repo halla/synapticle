@@ -37,7 +37,6 @@
   (swap! config assoc :items-per-sec (/ ipm 60))
   (restart eventbus-in))
 
-
 (defn set-randomize [eventbus-in randomize? value]
   (reset! randomize? value)
   (restart eventbus-in))
