@@ -41,7 +41,6 @@
 
 (defn gen-noncollide-attrs []
   (loop [trials 100] 
-    (println trials)
     (let [div2 (gen-div-attrs)]      
       (if (and (divs-collision? div2 @divs)
                (> trials 0))
