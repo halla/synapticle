@@ -5,15 +5,18 @@
   src: local('Open Sans'), local('OpenSans'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
 }
 body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; }
-#screen {  position:absolute; top:0;bottom:0;left:0;right:0; overflow: hidden;}
-#controls { position:absolute; left: 10%; top: 10%; background: #ddd; }
-#control-panel { padding: 15px; border: 1px solid #bbb;}
+#screen {  position:absolute; top:50px;bottom:0;left:0;right:0; overflow: hidden; z-index: -1}
+
+#controls { margin-bottom:0; }
 #control-panel.running .glyphicon-play { color: #bbb; }
 #control-panel.running .glyphicon-pause { color: #000; }
 #control-panel.stopped .glyphicon-play { color: #000; }
 #control-panel.stopped .glyphicon-pause { color: #bbb; }
 
-#wordinputs input { border: none; font-size: 20px; }
+#control-panel .navbar-nav li a { padding-top:10px; padding-bottom:10px;}
+#import-dlg { clear:both; }
+
+#wordinputs input { padding-left:5px; }
 #play-state { font-style: italic; }
 
 #controls .form-group { margin-bottom: 10px; }

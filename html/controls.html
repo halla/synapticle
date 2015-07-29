@@ -1,4 +1,17 @@
-<div id="control-panel">
+<div id="control-panel"> 
+  <ul class="nav navbar-nav">
+    <li><a id="toggle-import-dlg" href="#">Import</a></li>    
+  </ul> 
+  <div class="form-group">
+    <span id="wordinputs"> </span>
+    <button type="submit" class="btn btn-default">Add</button>
+  </div>
+
+  
+
+  <div class="form-group">
+    <button id="clear-screen" type="submit" class="btn btn-default">Clear</button>
+  </div>
   <div class="form-group">
     <button id="playbutton" type="button" class="btn btn-default">     
       <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
@@ -7,7 +20,7 @@
     </button>    
   </div>
   <div id="playmode" class="form-group">
-    Mode:
+    
     <input class="drizzle" onchange="app.core.set_playmode('drizzle')" type="radio" name="playmode" value="drizzle">Drizzle
     <input class="pairs" pop="sdf" onchange="app.core.set_playmode('pairs')" type="radio" name="playmode" value="pairs">Pairs
     <input class="single" onchange="" type="radio" name="playmode" value="single">Single
@@ -15,16 +28,19 @@
   
 
   <div id="" class="form-group">
-Speed:<input id="ipm" type="range"  min="0" max="400" value="10" /> <span class="help-text">items per minute</span>
-    <div class="input">
-  <input id="doRandomize" type="checkbox" >Randomize</input>
-</div>
+    <label for="ipm">Speed:</label><input id="ipm" class="form-control" type="range"  min="0" max="400" value="10" /> <span class="help-text"></span>
+    
+      <input id="doRandomize" type="checkbox" > </input>  <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
+    
   </div>
 
-  <div class="help-text">Type (or paste) text into the text area (one item per line) and hit import. </div>
-  <textarea id="textareaimport" class="form-control"> </textarea>
-  <div><button id="textareaimport-button" class="btn btn-default">Import</button></div>
-<div class="help-text text-right">Click outside this panel to hide the controls. </div>
+  <div id="import-dlg">
+    <div class="help-text">Type (or paste) text into the text area (one item per line) and hit import. </div>
+    <textarea id="textareaimport" class="form-control"> </textarea>
+    <div>
+      <button id="textareaimport-button" class="btn btn-default">Import</button>
+    </div>
+  </div>
 
   <div id="fileupload-panel">
 

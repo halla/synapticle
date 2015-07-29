@@ -1,12 +1,16 @@
 (ns app.ctl
   (:require [cljs.core.async :refer [put! chan <! mult tap]]
-            [dragonmark.web.core :as dw :refer [xf xform]])
+            [dragonmark.web.core :as dw :refer [xf xform]]
+            [reagent.core :as reagent :refer [atom]])
   (:require-macros [app.templates :refer [deftmpl]]
                    [cljs.core.async.macros :refer [go]]))
 
 (defn reload-hook []
-  (println "RELOAD CTL")
-)
+  (println "RELOAD CTL"))
+
+
+(def import-visible? (atom false))
+
 (defn start [eventbus-in]
   (put! eventbus-in :start))
 
@@ -21,6 +25,7 @@
     (start eventbus-in)
     (stop eventbus-in)))
 
+
 (deftmpl ctl-tpl "controls.html")
 
 (defn set-playmode! [eventbus-in playmode mode]
@@ -32,10 +37,10 @@
   (swap! config assoc :items-per-sec (/ ipm 60))
   (restart eventbus-in))
 
+
 (defn set-randomize [eventbus-in randomize? value]
   (reset! randomize? value)
   (restart eventbus-in))
-
 
 (defn display? [visible?]
   (println "VISIBLE" @visible?)
@@ -43,25 +48,26 @@
     "display: block;"
     "display: none;"))
 
-
 (defn control-panel [eventbus-in
                      playstate
-                     playstates
-                     controls-visible?
+                     playstates                     
                      playmode
                      config
                      randomize?
                      ]
   (when true
     (xform ctl-tpl 
-           ["#control-panel" {:style (display? controls-visible?)}]
+           ["#import-dlg" {:style (display? import-visible?)}]
            ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#play-state" (playstates @playstate)]           
+           ["#clear-screen" {:on-click #(put! eventbus-in :clear)}]
+           ["#toggle-import-dlg" {:on-click #(reset! import-visible? (not @import-visible?))}]
            ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
            ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
            ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
            ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]
+           
            ["#ipm" {:value (Math/floor (* 60  (:items-per-sec @config)))}]
            ["#playmode .drizzle" {:on-change #(set-playmode! eventbus-in playmode "drizzle")}]
            ["#playmode .pairs" {:on-change #(set-playmode! eventbus-in playmode "pairs")}]

@@ -8,7 +8,7 @@
             [app.players :as players]
             [app.representation :as reps]
             [app.ctl :as ctl]
-            [cljsjs.jquery-ui]
+            [cljsjs.jquery]
             [cljs.core.async :refer [chan mult tap <!]]
             [dragonmark.web.core :as dw :refer [xf xform]])
   (:use [domina.css :only [sel]]
@@ -40,8 +40,6 @@
   (atom ["ClojureScript" "In the browser" "Review your notes" "Generate random associations" "Preview text materials" "React" "Reagent"]))
 
 
-(defonce controls-visible? (atom true))
-
 (def playstates {:stopped "Stopped"
                  :running "Running"})
 (defonce playstate (atom :stopped))
@@ -61,8 +59,7 @@
 
   (reagent/render [ctl/control-panel eventbus-in
                    playstate
-                   playstates
-                   controls-visible?
+                   playstates                  
                    playmode
                    config
                    randomize?
@@ -101,10 +98,8 @@
             (= e :start) (start)
             (= e :stop) (stop)
             (= e :restart) (restart)
+            (= e :clear) (reset! words [])
             (= e :textarea-import) (importer/textarea-import words))
           (recur)))))
 
-(listen! (sel "#screen") :click 
-         (fn [evt]
-           (reset! controls-visible? (not @controls-visible?))))
 (restart)

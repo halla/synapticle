@@ -32,5 +32,6 @@
 (defn textfield-component [wordstore]
   [:input {:type "text" 
            :value @nextword
+           :class "form-control"
            :on-change #(reset! nextword (-> % .-target .-value))
            :on-key-down (keydownhandler wordstore @nextword)}])
