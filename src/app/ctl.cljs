@@ -10,7 +10,7 @@
 
 
 (def import-visible? (atom false))
-(def dataview-visible? (atom true))
+(def dataview-visible? (atom false))
 
 
 (defn start [eventbus-in]
