@@ -35,6 +35,7 @@
 (defonce print-timer (atom 0))
 (defonce animation-timer (atom 0))
 
+
 (defonce words 
 ;  "Data model"
   (atom ["ClojureScript" "In the browser" "Review your notes" "Generate random associations" "Preview text materials" "React" "Reagent"]))
@@ -50,13 +51,11 @@
 (defonce playmode (atom "drizzle"))
 (defonce randomize? (atom true))
 
-
 (defn get-player []  
   (playmodes @playmode))
 
 
 (defn mount-root []
-
   (reagent/render [ctl/control-panel eventbus-in
                    playstate
                    playstates                  
@@ -107,5 +106,10 @@
             (= e :clear) (clear-all)
             (= e :textarea-import) (importer/textarea-import words))
           (recur)))))
+
+
+(listen! (sel "#screen") :click 
+         (fn [evt]
+           (.toggle (js/jQuery "nav"))))
 
 (restart)
