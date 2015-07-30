@@ -63,6 +63,7 @@
                    playmode
                    config
                    randomize?
+                   words
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component words]
                   (.getElementById js/document "wordinputs"))

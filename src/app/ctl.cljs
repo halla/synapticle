@@ -10,6 +10,8 @@
 
 
 (def import-visible? (atom false))
+(def dataview-visible? (atom true))
+
 
 (defn start [eventbus-in]
   (put! eventbus-in :start))
@@ -24,7 +26,6 @@
   (if (= @playstate :stopped)
     (start eventbus-in)
     (stop eventbus-in)))
-
 
 (deftmpl ctl-tpl "controls.html")
 
@@ -53,12 +54,17 @@
                      playmode
                      config
                      randomize?
+                     data
                      ]
+
   (when true
     (xform ctl-tpl 
            ["#import-dlg" {:style (display? import-visible?)}]
            ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
+           ["#dataview" {:style (display? dataview-visible?)}]
+           ["#dataview .datalist li" :* @data]
+           ["#ejectbutton" {:on-click #(reset! dataview-visible? (not @dataview-visible?))} ]
            ["#play-state" (playstates @playstate)]           
            ["#clear-screen" {:on-click #(put! eventbus-in :clear)}]
            ["#toggle-import-dlg" {:on-click #(reset! import-visible? (not @import-visible?))}]

@@ -1,10 +1,7 @@
 <div id="control-panel"> 
-  <ul class="nav navbar-nav">
-    <li><a id="toggle-import-dlg" href="#">Import</a></li>    
-  </ul> 
   <div class="form-group">
     <span id="wordinputs"> </span>
-    <button type="submit" class="btn btn-default">Add</button>
+    <button id="submit-wordinputs" type="submit" class="btn btn-default">Add</button>
   </div>
 
   
@@ -13,6 +10,9 @@
     <button id="clear-screen" type="submit" class="btn btn-default">Clear</button>
   </div>
   <div class="form-group">
+    <button id="ejectbutton" type="button" class="btn btn-default">     
+      <span class="glyphicon glyphicon-eject" aria-hidden="true"></span>
+    </button>
     <button id="playbutton" type="button" class="btn btn-default">     
       <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
       /
@@ -20,7 +20,6 @@
     </button>    
   </div>
   <div id="playmode" class="form-group">
-    
     <input class="drizzle" onchange="app.core.set_playmode('drizzle')" type="radio" name="playmode" value="drizzle">Drizzle
     <input class="pairs" pop="sdf" onchange="app.core.set_playmode('pairs')" type="radio" name="playmode" value="pairs">Pairs
     <input class="single" onchange="" type="radio" name="playmode" value="single">Single
@@ -32,14 +31,6 @@
     
       <input id="doRandomize" type="checkbox" > </input>  <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
     
-  </div>
-
-  <div id="import-dlg">
-    <div class="help-text">Type (or paste) text into the text area (one item per line) and hit import. </div>
-    <textarea id="textareaimport" class="form-control"> </textarea>
-    <div>
-      <button id="textareaimport-button" class="btn btn-default">Import</button>
-    </div>
   </div>
 
   <div id="fileupload-panel">
@@ -57,5 +48,22 @@
     <div id="dropTarget" style="width: 100%; height: 100px; border: 1px #ccc solid; padding: 10px;">Drop some files here</div>
     <output id="filesInfo"></output>
   </div>
+  <div id="dataview">
+    <ul class="datalist">
+      <li>item1</li>
+    </ul>
+    <ul class="nav navbar-nav">
+      <li><a id="toggle-import-dlg" href="#">Import</a></li>    
+    </ul> 
+    <div id="import-dlg">
+      <div class="help-text">Type (or paste) text into the text area (one item per line) and hit import. </div>
+      <textarea id="textareaimport" class="form-control"> </textarea>
+      <div>
+        <button id="textareaimport-button" class="btn btn-default">Import</button>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
