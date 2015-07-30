@@ -8,7 +8,7 @@
 (defn reload-hook []
   (println "RELOAD CTL"))
 
-
+(def controls-visible (atom false))
 (def import-visible? (atom false))
 (def dataview-visible? (atom false))
 
@@ -48,6 +48,9 @@
     "display: block;"
     "display: none;"))
 
+(defn data-item [data eventbus-in]
+  (for [item @data] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
+
 (defn control-panel [eventbus-in
                      playstate
                      playstates                     
@@ -63,7 +66,8 @@
            ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#dataview" {:style (display? dataview-visible?)}]
-           ["#dataview .datalist li" :* @data]
+           ["#dataview .datalist li" :* (data-item data eventbus-in) ]
+
            ["#ejectbutton" {:on-click #(reset! dataview-visible? (not @dataview-visible?))} ]
            ["#play-state" (playstates @playstate)]           
            ["#clear-screen" {:on-click #(put! eventbus-in :clear)}]

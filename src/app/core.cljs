@@ -41,6 +41,9 @@
   (atom ["ClojureScript" "In the browser" "Review your notes" "Generate random associations" "Preview text materials" "React" "Reagent"]))
 
 
+(defn delete [item]
+  (swap! words #(vec (remove (fn [word] (= word item)) %))))
+
 (def playstates {:stopped "Stopped"
                  :running "Running"})
 (defonce playstate (atom :stopped))
@@ -104,9 +107,10 @@
             (= e :stop) (stop)
             (= e :restart) (restart)
             (= e :clear) (clear-all)
-            (= e :textarea-import) (importer/textarea-import words))
+            (= e :textarea-import) (importer/textarea-import words)
+            (and (map? e)
+                 (contains? e :delete)) (delete (:delete e)))
           (recur)))))
-
 
 (listen! (sel "#screen") :click 
          (fn [evt]
