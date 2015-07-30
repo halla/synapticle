@@ -5,7 +5,7 @@
   src: local('Open Sans'), local('OpenSans'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
 }
 body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; }
-#screen {  position:absolute; top:50px;bottom:0;left:0;right:0; overflow: hidden; z-index: -1}
+#screen {  position:relative; overflow: hidden; height:100%}
 
 #controls { margin-bottom:0; }
 #control-panel.running .glyphicon-play { color: #bbb; }
