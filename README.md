@@ -13,7 +13,7 @@ Or build yourself:
 
 Requirements:
 * Java runtime
-* Boot (Clojure build tool)
+* [Boot](https://github.com/boot-clj/boot#install)  (Clojure build tool)
 * probably something else too
 
 Steps:
