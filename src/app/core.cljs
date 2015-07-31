@@ -6,6 +6,7 @@
             [app.importer :as importer]
             [app.player :as player]
             [app.players :as players]
+            [app.datasource :as data]
             [app.representation :as reps]
             [app.ctl :as ctl]
             [cljsjs.jquery]
@@ -35,22 +36,13 @@
 (defonce print-timer (atom 0))
 (defonce animation-timer (atom 0))
 
-
-(defonce words 
-;  "Data model"
-  (atom ["ClojureScript" "In the browser" "Review your notes" "Generate random associations" "Preview text materials" "React" "Reagent"]))
-
-
-(defn delete [item]
-  (swap! words #(vec (remove (fn [word] (= word item)) %))))
-
 (def playstates {:stopped "Stopped"
                  :running "Running"})
 (defonce playstate (atom :stopped))
 
-(def playmodes {"drizzle" (drizzle/drizzle words screen/divs)
-                "pairs" (pairs/pairs words screen/divs)
-                "single" (players/single words screen/divs)})
+(def playmodes {"drizzle" (drizzle/drizzle data/words screen/divs)
+                "pairs" (pairs/pairs data/words screen/divs)
+                "single" (players/single data/words screen/divs)})
 (defonce playmode (atom "drizzle"))
 (defonce randomize? (atom true))
 
@@ -65,9 +57,9 @@
                    playmode
                    config
                    randomize?
-                   words
+                   data/words
                    ] (.getElementById js/document "controls"))
-  (reagent/render [importer/textfield-component words]
+  (reagent/render [importer/textfield-component data/words eventbus-in]
                   (.getElementById js/document "wordinputs"))
   (reagent/render [player/render (get-player)] (.getElementById js/document "screen")))
 
@@ -88,7 +80,7 @@
   (reset! playstate :stopped))
 
 (defn clear-all []
-  (reset! words [])
+  (data/clear)
   (screen/clear))
 
 (defn restart []
@@ -107,9 +99,10 @@
             (= e :stop) (stop)
             (= e :restart) (restart)
             (= e :clear) (clear-all)
-            (= e :textarea-import) (importer/textarea-import words)
+            (= e :textarea-import) (importer/textarea-import data/words)
+            (= e :data-updated) "do smtg"
             (and (map? e)
-                 (contains? e :delete)) (delete (:delete e)))
+                 (contains? e :delete)) (data/delete (:delete e)))
           (recur)))))
 
 (listen! (sel "#screen") :click 
