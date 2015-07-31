@@ -1,5 +1,6 @@
 (ns app.importer
-  (:require [reagent.core :as reagent :refer [atom]]))
+  (:require [reagent.core :as reagent :refer [atom]]
+            [cljs.core.async :refer [put!]]))
 
 
 (defn tokenize-content []
@@ -9,29 +10,31 @@
 
 (defn textarea-import [words]
   (let [ws (js->clj (.split (.-value (.getElementById js/document "textareaimport")) "\n"))]
-    (println ws)
-    (reset! words (js->clj ws))))
-
+    (reset! words (vec (filter #(not= "" %) ;; comp throws an error..
+                               (map #(clojure.string/trim %) 
+                                    ws))))))
 
 ;; single word input field
 
 (defonce nextword (atom ""))
 
-(defn textfield-import [words word]
+(defn textfield-import [words word eventbus-in]
   (swap! words conj (js->clj word))
-  (reset! nextword ""))
+  (reset! nextword "")
+  (put! eventbus-in :data-updated)
+)
 
 
-(defn keydownhandler [wordstore word]
+(defn keydownhandler [wordstore word eventbus-in]
   (fn [e]
     (when (= (.-which e) 27) ;esc
       (reset! nextword ""))
     (when (= (.-key e) "Enter")
-      (textfield-import wordstore word))))
+      (textfield-import wordstore word eventbus-in))))
 
-(defn textfield-component [wordstore]
+(defn textfield-component [wordstore eventbus-in]
   [:input {:type "text" 
            :value @nextword
            :class "form-control"
            :on-change #(reset! nextword (-> % .-target .-value))
-           :on-key-down (keydownhandler wordstore @nextword)}])
+           :on-key-down (keydownhandler wordstore @nextword eventbus-in)}])
