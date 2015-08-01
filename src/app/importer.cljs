@@ -8,11 +8,15 @@
                  (.split page ". ")
                  ))))
 
+
+
+
 (defn textarea-import [words]
-  (let [ws (js->clj (.split (.-value (.getElementById js/document "textareaimport")) "\n"))]
-    (reset! words (vec (filter #(not= "" %) ;; comp throws an error..
-                               (map #(clojure.string/trim %) 
-                                    ws))))))
+  (let [ws (js->clj (.split (.-value (.getElementById js/document "textareaimport")) "\n"))
+        ws2 (vec (distinct (filter #(not= "" %) ;; comp throws an error..
+                                   (map #(clojure.string/trim %) 
+                                        ws))))]
+    (swap! words concat ws2)))
 
 ;; single word input field
 
