@@ -39,6 +39,7 @@
 (defn textfield-component [wordstore eventbus-in]
   [:input {:type "text" 
            :value @nextword
+           :placeholder "Add item"
            :class "form-control"
            :on-change #(reset! nextword (-> % .-target .-value))
            :on-key-down (keydownhandler wordstore @nextword eventbus-in)}])
