@@ -1,8 +1,15 @@
 # synapticle
-Tickle your brain with information.
+
+*(This browser based thinking tool is a work in progress.)* 
+
+Tickle your brain with information, reinforce your memory, collide ideas.
+
+* Review your notes
+* Preview text materials
+* Generate new ideas
 
 --
-This is a work in progress. Use at your own risk.
+
 
 Built using [ClojureScript](https://github.com/clojure/clojurescript) and [Reagent](https://reagent-project.github.io/).
 
