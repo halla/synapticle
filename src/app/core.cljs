@@ -57,12 +57,11 @@
                    playmode
                    config
                    randomize?
-                   data/words
+                   data/wordlists
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component data/words eventbus-in]
                   (.getElementById js/document "wordinputs"))
   (reagent/render [player/render (get-player)] (.getElementById js/document "screen")))
-
 
 
 (defn start []

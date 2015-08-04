@@ -8,9 +8,10 @@
 (defn reload-hook []
   (println "RELOAD CTL"))
 
-(def controls-visible (atom false))
+(def controls-visible (atom true))
 (def import-visible? (atom false))
 (def dataview-visible? (atom false))
+(def active-list (atom {} ))
 
 
 (defn start [eventbus-in]
@@ -26,6 +27,7 @@
   (if (= @playstate :stopped)
     (start eventbus-in)
     (stop eventbus-in)))
+
 
 (deftmpl ctl-tpl "controls.html")
 
@@ -49,7 +51,7 @@
     "display: none;"))
 
 (defn data-item [data eventbus-in]
-  (for [item @data] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
+  (for [item data] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
 
 (defn control-panel [eventbus-in
                      playstate
@@ -59,15 +61,20 @@
                      randomize?
                      data
                      ]
-
+  (when (empty? @active-list)
+    (reset! active-list (@data 0)))
+ 
   (when true
     (xform ctl-tpl 
            ["#import-dlg" {:style (display? import-visible?)}]
            ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#dataview" {:style (display? dataview-visible?)}]
-           ["#dataview .datalist li" :* (data-item data eventbus-in) ]
-
+           ["#dataview .datalist li" :* (data-item (:items @active-list) eventbus-in) ]
+           ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
+                                                      idx (.getAttribute t "data-idx")] 
+                                                  (println "IDX" idx)
+                                                  (reset! active-list (@data idx)) )}]
            ["#ejectbutton" {:on-click #(reset! dataview-visible? (not @dataview-visible?))} ]
            ["#play-state" (playstates @playstate)]           
            ["#clear-screen" {:on-click #(put! eventbus-in :clear)}]
