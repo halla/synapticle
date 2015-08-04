@@ -71,6 +71,7 @@
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#dataview" {:style (display? dataview-visible?)}]
            ["#dataview .datalist li" :* (data-item (:items @active-list) eventbus-in) ]
+           ["#dataview .nav-tabs li" :* (for [i (range (count @data))] [:a {:data-idx i} (:title (@data i))]) ]
            ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
                                                       idx (.getAttribute t "data-idx")] 
                                                   (println "IDX" idx)
