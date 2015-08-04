@@ -40,9 +40,9 @@
                  :running "Running"})
 (defonce playstate (atom :stopped))
 
-(def playmodes {"drizzle" (drizzle/drizzle data/words screen/divs)
-                "pairs" (pairs/pairs data/words screen/divs)
-                "single" (players/single data/words screen/divs)})
+(def playmodes {"drizzle" (drizzle/drizzle data/wordlists screen/divs)
+                "pairs" (pairs/pairs data/wordlists screen/divs)
+                "single" (players/single data/wordlists screen/divs)})
 (defonce playmode (atom "drizzle"))
 (defonce randomize? (atom true))
 
@@ -51,6 +51,7 @@
 
 
 (defn mount-root []
+
   (reagent/render [ctl/control-panel eventbus-in
                    playstate
                    playstates                  
@@ -68,7 +69,6 @@
   (let [interval-new (/ 1000 (:items-per-sec @config))
         interval-anim 50
         step-func (if @randomize? player/step-rnd player/step-fwd)]
-    (println "STEP" @randomize?)
     (reset! print-timer  (js/setInterval #(step-func (get-player)) interval-new))
     (reset! animation-timer  (js/setInterval #(player/animation (get-player)) interval-anim))
     (reset! playstate :running)))
@@ -79,8 +79,9 @@
   (reset! playstate :stopped))
 
 (defn clear-all []
-  (data/clear)
+  (data/clear (@data/wordlists @ctl/active-list-idx))
   (screen/clear))
+
 
 (defn restart []
   (println "RESTART" @randomize?)
@@ -101,7 +102,7 @@
             (= e :textarea-import) (importer/textarea-import data/words)
             (= e :data-updated) "do smtg"
             (and (map? e)
-                 (contains? e :delete)) (data/delete (:delete e)))
+                 (contains? e :delete)) (data/delete! @ctl/active-list-idx (:delete e)))
           (recur)))))
 
 (listen! (sel "#screen") :click 

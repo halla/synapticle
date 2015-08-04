@@ -15,8 +15,15 @@
   (atom ["ClojureScript" "In the browser" "Review your notes" "Generate random associations" "Preview text materials" "React" "Reagent"]))
 
 
-(defn delete [item]
-  (swap! words #(vec (remove (fn [word] (= word item)) %))))
+(defn delete [vect item]
+  (vec (remove (fn [word] (= word item)) vect)))
+
+(defn delete!
+  ([item]
+   (swap! words #(delete % item)))
+  ([wordlist-idx item] 
+   (swap! words #(update-in % [wordlist-idx] (fn [list] {:title (:title list)
+                                                         :items (delete (:items list) item)})))))
 
 (defn delete-wordlist [wordlist]
   (swap! wordlists #(vec (remove (fn [list] (= list wordlist)) %))))

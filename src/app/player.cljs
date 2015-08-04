@@ -1,5 +1,6 @@
 (ns app.player)
 
+
 (defprotocol Player
   (step-fwd [this])
   (step-rnd [this])
