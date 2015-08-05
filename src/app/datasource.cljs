@@ -42,7 +42,7 @@
   ([wordlist items]
    (swap! wordlists (fn [list]
                       (vec (map #(if (= % wordlist)
-                                   (assoc % :items (concat (:items %) items)) 
+                                   (assoc % :items (vec (concat (:items %) items))) 
                                    %) list)))))
   ([items] 
    (add-multiple! (@wordlists 0) items)))
