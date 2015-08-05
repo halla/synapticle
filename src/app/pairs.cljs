@@ -1,27 +1,27 @@
 (ns app.pairs
-  (:require [app.player :as player]               
+  (:require [app.player :as player]
+            [app.multiplexer :as mux]
             [reagent.core :as reagent :refer [atom]]))
 
 (def items ["black" "white" "yellow" "green"])
 (def pair (atom ["black" "white"]))
 (def index (atom 0))
 
-(defn get-combination [list] 
-  (if (< (count list) 2)
+(defn get-combination [sources]
+  (if false ;; TODO check empty sources
     ["Add" "items"]
-    (let [get-item #(list (rand-int (count list)))
-          item1 (get-item)]
+    (let [item1 (mux/get-item sources)]
       (loop [trials 100]
-        (let [item2 (get-item)]
+        (let [item2 (mux/get-item sources)]
           (if (= item1 item2)
             (recur (dec trials))
-            [(get-item) (get-item)]))))))
+            [item1 item2]))))))
 
 (defn pairs [data presentation]
   (reify
     player/Player
-    (step-fwd [_] (reset! pair (get-combination @data))) 
-    (step-rnd [_] (reset! pair (get-combination @data)))
+    (step-fwd [_] (reset! pair (get-combination data))) 
+    (step-rnd [_] (reset! pair (get-combination data)))
     (animation [_])
     (render [_]   
       [:div {:class "pairs"}
