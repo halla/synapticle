@@ -99,7 +99,7 @@
             (= e :stop) (stop)
             (= e :restart) (restart)
             (= e :clear) (clear-all)
-            (= e :textarea-import) (importer/textarea-import data/words)
+            (= e :textarea-import) (importer/textarea-import! data/words eventbus-in)
             (= e :data-updated) "do smtg"
             (and (map? e)
                  (contains? e :delete)) (data/delete! @ctl/active-list-idx (:delete e)))
