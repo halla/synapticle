@@ -50,8 +50,8 @@
     "display: block;"
     "display: none;"))
 
-(defn data-item [data eventbus-in]
-  (for [item data] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
+(defn data-item [items eventbus-in]
+  (for [item items] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
 
 (defn control-panel [eventbus-in
                      playstate

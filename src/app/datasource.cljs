@@ -32,8 +32,12 @@
   ([item]
    (swap! words #(delete % item)))
   ([wordlist-idx item] 
-   (swap! words #(update-in % [wordlist-idx] (fn [list] {:title (:title list)
-                                                         :items (delete (:items list) item)})))))
+   (let [wordlist (@wordlists wordlist-idx)]
+     (swap! wordlists (fn [list]
+                        (mapv #(if (= % wordlist)
+                                 (assoc % :items (delete (:items %) item)) 
+                                 %) list))))))
+
 (defn add-multiple!
   ([wordlist items]
    (swap! wordlists (fn [list]
