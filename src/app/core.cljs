@@ -30,7 +30,7 @@
 
 (def config (atom { 
                    :n-concurrent-items 20
-                   :items-per-sec 3.25
+                   :items-per-sec 2.0
                    }))
 
 (defonce print-timer (atom 0))
