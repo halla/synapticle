@@ -1,5 +1,6 @@
 (ns app.importer
   (:require [reagent.core :as reagent :refer [atom]]
+            [app.datasource :as data]
             [cljs.core.async :refer [put!]]))
 
 
@@ -10,23 +11,21 @@
 
 
 
-
 (defn textarea-import [words]
   (let [ws (js->clj (.split (.-value (.getElementById js/document "textareaimport")) "\n"))
         ws2 (vec (distinct (filter #(not= "" %) ;; comp throws an error..
                                    (map #(clojure.string/trim %) 
                                         ws))))]
-    (swap! words concat ws2)))
+    (data/add-multiple! ws2)))
 
 ;; single word input field
 
 (defonce nextword (atom ""))
 
-(defn textfield-import [words word eventbus-in]
-  (swap! words conj (js->clj word))
+(defn textfield-import! [words word eventbus-in]
+  (data/add! (js->clj word))
   (reset! nextword "")
-  (put! eventbus-in :data-updated)
-)
+  (put! eventbus-in :data-updated))
 
 
 (defn keydownhandler [wordstore word eventbus-in]
@@ -34,7 +33,7 @@
     (when (= (.-which e) 27) ;esc
       (reset! nextword ""))
     (when (= (.-key e) "Enter")
-      (textfield-import wordstore word eventbus-in))))
+      (textfield-import! wordstore word eventbus-in))))
 
 (defn textfield-component [wordstore eventbus-in]
   [:input {:type "text" 

@@ -4,7 +4,6 @@
             [app.representation :as reps]))
 
 (defn get-item [sources]
-  (println "GET" sources)
   (let [rnd-src (@sources (rand-int (count @sources)))
         items (:items rnd-src)
         rnd-item (items (rand-int (count items)))]

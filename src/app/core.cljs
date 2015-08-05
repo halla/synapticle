@@ -60,7 +60,7 @@
                    randomize?
                    data/wordlists
                    ] (.getElementById js/document "controls"))
-  (reagent/render [importer/textfield-component data/words eventbus-in]
+  (reagent/render [importer/textfield-component data/wordlists eventbus-in]
                   (.getElementById js/document "wordinputs"))
   (reagent/render [player/render (get-player)] (.getElementById js/document "screen")))
 
