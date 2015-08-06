@@ -6,24 +6,25 @@
             [cljs.core.async :refer [put!]]))
 
 
-(defn tokenize-content []
-  (concat (vec (for [page js/content]                 
+(def tokenize-content (concat (vec (for [page js/content]                 
                  (.split page ". ")
                  ))))
 
+(def split-by-line
+  (mapcat #(str/split % #"\n")))
 
-(defn split-by-line [input]
-  (let [in (if (sequential? input) input [input])] 
-    (flatten (map #(str/split  % #"\n") in))))
+(def trim-items 
+  (map #(clojure.string/trim %)))
 
-(defn trim-items [input]
-  (map #(clojure.string/trim %) input))
+(def remove-empty ;; comp throws an error..
+  (filter #(not= "" %)))
 
-(defn remove-empty [input] ;; comp throws an error..
-  (filter #(not= "" %) input) )
+(def process-pipeline (comp split-by-line trim-items remove-empty))
 
 (defn process-input [input]
-  (vec (distinct (remove-empty (trim-items (split-by-line input))))))
+  (let [in (if (sequential? input) input [input])] 
+    (vec (distinct (sequence process-pipeline in)))))
+
 
 (defn textarea-import! [words eventbus-in]
   (let [ws (js->clj (.-value (.getElementById js/document "textareaimport")))
