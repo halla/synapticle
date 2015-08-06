@@ -17,6 +17,7 @@
                                    (map #(clojure.string/trim %) 
                                         ws))))]
     (data/add-multiple! (@data/wordlists @ctl/active-list-idx) ws2)
+    (aset (.getElementById js/document "textareaimport") "value" "")
     (put! eventbus-in :data-updated)))
 
 ;; single word input field
