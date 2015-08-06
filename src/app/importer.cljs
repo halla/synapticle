@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [app.datasource :as data]
             [app.ctl :as ctl]
+            [clojure.string :as str]
             [cljs.core.async :refer [put!]]))
 
 
@@ -11,11 +12,22 @@
                  ))))
 
 
+(defn split-by-line [input]
+  (let [in (if (sequential? input) input [input])] 
+    (flatten (map #(str/split  % #"\n") in))))
+
+(defn trim-items [input]
+  (map #(clojure.string/trim %) input))
+
+(defn remove-empty [input] ;; comp throws an error..
+  (filter #(not= "" %) input) )
+
+(defn process-input [input]
+  (vec (distinct (remove-empty (trim-items (split-by-line input))))))
+
 (defn textarea-import! [words eventbus-in]
-  (let [ws (js->clj (.split (.-value (.getElementById js/document "textareaimport")) "\n"))
-        ws2 (vec (distinct (filter #(not= "" %) ;; comp throws an error..
-                                   (map #(clojure.string/trim %) 
-                                        ws))))]
+  (let [ws (js->clj (.-value (.getElementById js/document "textareaimport")))
+        ws2 (process-input ws)]
     (data/add-multiple! (@data/wordlists @ctl/active-list-idx) ws2)
     (aset (.getElementById js/document "textareaimport") "value" "")
     (put! eventbus-in :data-updated)))
