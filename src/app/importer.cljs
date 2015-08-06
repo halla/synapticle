@@ -6,9 +6,9 @@
             [cljs.core.async :refer [put!]]))
 
 
-(def tokenize-content (concat (vec (for [page js/content]                 
-                 (.split page ". ")
-                 ))))
+(defn tokenize-content [] 
+  (concat (vec (for [page js/content]                 
+                 (.split page ". ")))))
 
 (def split-by-line
   (mapcat #(str/split % #"\n")))
