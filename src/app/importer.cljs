@@ -38,7 +38,7 @@
 (defonce nextword (atom ""))
 
 (defn textfield-import! [words word eventbus-in]
-  (data/add! (@data/wordlists @ctl/active-list-idx) (js->clj word))
+  (data/add-multiple! (@data/wordlists @ctl/active-list-idx) (process-input (js->clj word)))
   (reset! nextword "")
   (put! eventbus-in :data-updated))
 
