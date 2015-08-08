@@ -12,13 +12,19 @@
                   "Just relax and watch the screen"
                   "Let your thoughts wander"                  
                   "If you get an idea, add it to the wordlist"
-                  "You can pause the screen to hold a thought"]}
+                  "You can pause the screen to hold a thought"]
+          :gain 1
+          :muted? false}
          {:title "Expand"
           :items ["imagine" 
                   "possible"
-                  "future"]}
+                  "future"]
+          :gain 0.5
+          :muted? false}
          {:title "Questions"
-          :items ["What if?" "What else?"]}]
+          :items ["What if?" "What else?"]
+          :gain 0.3
+          :muted? false}]
         )
 )
 (defonce words 
@@ -57,6 +63,12 @@
    (add! (@wordlists 0) item))
 )
 
+(defn toggle-muted [wordlist]
+ (swap! wordlists (fn [list]
+                      (vec (map #(if (= % wordlist)
+                                   (assoc % :muted? (not (:muted? %) item)) 
+                                   %) list)))))
+  
 (defn delete-wordlist [wordlist]
   (swap! wordlists #(vec (remove (fn [list] (= list wordlist)) %))))
 

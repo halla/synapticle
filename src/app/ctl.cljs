@@ -1,6 +1,7 @@
 (ns app.ctl
   (:require [cljs.core.async :refer [put! chan <! mult tap]]
             [dragonmark.web.core :as dw :refer [xf xform]]
+            [app.datasource :as data]
             [reagent.core :as reagent :refer [atom]])
   (:require-macros [app.templates :refer [deftmpl]]
                    [cljs.core.async.macros :refer [go]]))
@@ -53,6 +54,15 @@
 (defn data-item [items eventbus-in]
   (for [item items] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
 
+
+(defn data-tab-item [data eventbus-in]
+  (for [i (range (count data))] 
+    [:div {:class (str "muted-" (:muted? (data i)) )}
+     [:a {:data-idx i} (:title (data i))]
+     [:span {:class (str "glyphicon " (if (:muted? (data i)) "glyphicon-volume-off" "glyphicon-volume-up")) 
+             :aria-hidden "true"
+             :on-click #(data/toggle-muted (data i))} ]]))
+
 (defn control-panel [eventbus-in
                      playstate
                      playstates                     
@@ -68,8 +78,7 @@
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#dataview" {:style (display? dataview-visible?)}]
            ["#dataview .datalist li" :* (data-item (:items (@data @active-list-idx)) eventbus-in) ]
-           ["#dataview .nav-tabs li" :* (for [i (range (count @data))] [:a {:data-idx i} 
-                                                                        (:title (@data i))]) ]
+           ["#dataview .nav-tabs li" :* (data-tab-item @data eventbus-in) ]
            ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
                                                       idx (.getAttribute t "data-idx")] 
                                                   (println "IDX" idx)

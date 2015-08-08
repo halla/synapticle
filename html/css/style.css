@@ -5,8 +5,11 @@
   src: local('Open Sans'), local('OpenSans'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
 }
 body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; }
-#screen {  position:relative; overflow: hidden; height:100%}
+#screen {  position:relative; overflow: hidden; height:100%; background-color: #ffe}
 
+.nav-tabs > li > a:hover {
+    cursor: pointer;
+}
 #controls { margin-bottom:0; }
 #control-panel.running .glyphicon-play { color: #bbb; }
 #control-panel.running .glyphicon-pause { color: #000; }
@@ -14,15 +17,21 @@ body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; 
 #control-panel.stopped .glyphicon-pause { color: #bbb; }
 
 #control-panel .navbar-nav li a { padding-top:10px; padding-bottom:10px;}
+
+#control-panel .nav-tabs li { margin-right: 20px; }
+#control-panel .nav-tabs .glyphicon { margin: 0 5px; cursor:pointer}
+
 #import-dlg { clear:both; }
 
 #wordinputs input { padding-left:5px; }
 #play-state { font-style: italic; }
 
+
 #controls .form-group { margin-bottom: 10px; }
 #textareaimport { height: 300px; width: 500px; }
 #fileupload-panel { display: none;}
 
+#dataview .datalist { max-height: 300px; overflow-y: scroll; }
 .item { position: absolute; }
 
 
