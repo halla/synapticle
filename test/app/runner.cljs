@@ -2,6 +2,7 @@
   (:require [cljs.test :refer-macros [run-tests]]
             [app.core-test]
             [app.misc-test]
+            [app.multiplexer-test]
             [app.screen-test]))
 
 (enable-console-print!)
@@ -12,6 +13,7 @@
    'app.core-test
    'app.misc-test
    'app.screen-test
+   'app.multiplexer-test
 ))
 
 ;sometimes "not defined", sometimes works..
