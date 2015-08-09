@@ -66,7 +66,7 @@
 (defn toggle-muted [wordlist]
  (swap! wordlists (fn [list]
                       (vec (map #(if (= % wordlist)
-                                   (assoc % :muted? (not (:muted? %) item)) 
+                                   (assoc % :muted? (not (:muted? %))) 
                                    %) list)))))
   
 (defn delete-wordlist [wordlist]
