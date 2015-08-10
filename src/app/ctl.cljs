@@ -54,10 +54,9 @@
 (defn data-item [items eventbus-in]
   (for [item items] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
 
-
-(defn data-tab-item [data eventbus-in]
+(defn data-tab-item [data active-idx eventbus-in]
   (for [i (range (count data))] 
-    [:div {:class (str "muted-" (:muted? (data i)) )}
+    [:div {:class (str "muted-" (:muted? (data i)) (when (= active-idx i) " active"))}
      [:a {:data-idx i} (:title (data i))]
      [:span {:class (str "glyphicon " (if (:muted? (data i)) "glyphicon-volume-off" "glyphicon-volume-up")) 
              :aria-hidden "true"
@@ -78,10 +77,9 @@
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#dataview" {:style (display? dataview-visible?)}]
            ["#dataview .datalist li" :* (data-item (:items (@data @active-list-idx)) eventbus-in) ]
-           ["#dataview .nav-tabs li" :* (data-tab-item @data eventbus-in) ]
+           ["#dataview .nav-tabs li" :* (data-tab-item @data @active-list-idx eventbus-in) ]
            ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
-                                                      idx (.getAttribute t "data-idx")] 
-                                                  (println "IDX" idx)
+                                                      idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
                                                   (reset! active-list-idx idx) )}]
            ["#ejectbutton" {:on-click #(reset! dataview-visible? (not @dataview-visible?))} ]
            ["#play-state" (playstates @playstate)]           
