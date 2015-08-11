@@ -5,7 +5,6 @@
             [app.representation :as reps]))
 
 
-
 (defn drizzle [data layout]
   (reify 
     player/Player

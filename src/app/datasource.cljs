@@ -13,17 +13,29 @@
                   "Let your thoughts wander"                  
                   "If you get an idea, add it to the wordlist"
                   "You can pause the screen to hold a thought"]
-          :gain 1
+          :gain 0.7
+          :muted? false}
+         {:title "List 2"
+          :items []
+          :gain 0.7
+          :muted? false}
+         {:title "List 3"
+          :items []
+          :gain 0.7
+          :muted? false}
+         {:title "List 4"
+          :items []
+          :gain 0.7
           :muted? false}
          {:title "Expand"
           :items ["imagine" 
                   "possible"
                   "future"]
-          :gain 0.5
+          :gain 0.3
           :muted? false}
          {:title "Questions"
           :items ["What if?" "What else?"]
-          :gain 0.3
+          :gain 0.2
           :muted? false}]
         )
 )
@@ -69,6 +81,12 @@
                                    (assoc % :muted? (not (:muted? %))) 
                                    %) list)))))
   
+(defn set-mix! [wordlist value]
+ (swap! wordlists (fn [list]
+                      (vec (map #(if (= % wordlist)
+                                   (assoc % :gain value) 
+                                   %) list)))))
+
 (defn delete-wordlist [wordlist]
   (swap! wordlists #(vec (remove (fn [list] (= list wordlist)) %))))
 

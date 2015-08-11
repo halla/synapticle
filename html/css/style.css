@@ -34,10 +34,12 @@ body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; 
 #control-panel .nav-tabs li { margin-right: 20px; }
 #control-panel .nav-tabs .glyphicon { margin: 0 5px; cursor:pointer}
 
+#data-tabs-content { max-width: 500px; }
 #import-dlg { clear:both; }
 
 #wordinputs input { padding-left:5px; }
 #play-state { font-style: italic; }
+
 
 
 #controls .form-group { margin-bottom: 10px; }

@@ -14,7 +14,6 @@
 (def dataview-visible? (atom false))
 (def active-list-idx (atom 0))
 
-
 (defn start [eventbus-in]
   (put! eventbus-in :start))
 
@@ -54,6 +53,7 @@
 (defn data-item [items eventbus-in]
   (for [item items] [:div  [:span item] [:button {:on-click #(put! eventbus-in {:delete item})} "D"]]))
 
+
 (defn data-tab-item [data active-idx eventbus-in]
   (for [i (range (count data))] 
     [:div {:class (str "muted-" (:muted? (data i)) (when (= active-idx i) " active"))}
@@ -76,6 +76,10 @@
            ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
            ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
            ["#dataview" {:style (display? dataview-visible?)}]
+           ["#channel-controls .channel-mix"  {:value (:gain (@data @active-list-idx))
+                                               :on-change #(data/set-mix! 
+                                                            (@data @active-list-idx) 
+                                                            (cljs.reader/read-string (.. % -target -value)))}]
            ["#dataview .datalist li" :* (data-item (:items (@data @active-list-idx)) eventbus-in) ]
            ["#dataview .nav-tabs li" :* (data-tab-item @data @active-list-idx eventbus-in) ]
            ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
