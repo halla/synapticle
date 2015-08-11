@@ -2,6 +2,7 @@
   (:require [cljs.core.async :refer [put! chan <! mult tap]]
             [dragonmark.web.core :as dw :refer [xf xform]]
             [app.datasource :as data]
+            [cljs.reader]
             [reagent.core :as reagent :refer [atom]])
   (:require-macros [app.templates :refer [deftmpl]]
                    [cljs.core.async.macros :refer [go]]))
