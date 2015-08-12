@@ -17,7 +17,6 @@
 (defn reload-hook []
   (println "RELOAD CTL"))
 
-(def controls-visible (atom true))
 (def import-visible? (atom false))
 (def active-list-idx (atom 0))
 
@@ -108,7 +107,7 @@
                                                   (dispatch-sync [:set-active-channel idx]) )}]
            ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
            ["#play-state" (playstates @playstate)]           
-           ["#clear-screen" {:on-click #(put! eventbus-in :clear)}]
+           ["#clear-screen" {:on-click #(dispatch-sync [:clear])}]
            ["#toggle-import-dlg" {:on-click #(reset! import-visible? (not @import-visible?))}]
            ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
            ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]

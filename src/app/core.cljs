@@ -80,10 +80,6 @@
   (js/clearInterval @animation-timer )
   (reset! playstate :stopped))
 
-(defn clear-all []
-  (data/clear (@data/wordlists @ctl/active-list-idx))
-  (screen/clear))
-
 
 (defn restart []
   (println "RESTART" @randomize?)
@@ -100,7 +96,6 @@
             (= e :start) (start)
             (= e :stop) (stop)
             (= e :restart) (restart)
-            (= e :clear) (clear-all)
             (= e :textarea-import) (importer/textarea-import! data/words eventbus-in)
             (= e :data-updated) "do smtg"
             (and (map? e)
