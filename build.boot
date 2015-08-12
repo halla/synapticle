@@ -6,6 +6,7 @@
                  [adzerk/boot-reload    "0.3.1"      :scope "test"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [reagent "0.5.0"]
+                 [re-frame "0.4.1"]
                  [cljs-tooling "0.1.7"]
                  [org.clojure/tools.nrepl "0.2.10"]
                  [domina "1.0.3"]

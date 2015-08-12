@@ -3,7 +3,11 @@
             [dragonmark.web.core :as dw :refer [xf xform]]
             [app.datasource :as data]
             [cljs.reader]
-            [reagent.core :as reagent :refer [atom]])
+            [reagent.core :as reagent :refer [atom]]
+            [re-frame.core :refer [register-handler 
+                                   register-sub
+                                   dispatch-sync
+                                   subscribe]])
   (:require-macros [app.templates :refer [deftmpl]]
                    [cljs.core.async.macros :refer [go]]))
 
@@ -63,6 +67,14 @@
              :aria-hidden "true"
              :on-click #(data/toggle-muted (data i))} ]]))
 
+;todo switch to using app-db
+(register-handler :toggle-dataview-visibility #(reset! dataview-visible? (not @dataview-visible?)))
+(register-handler :set-active-channel (fn [_ [_ idx]] (reset! active-list-idx idx) ))
+(register-handler :toggle-play (fn [_ [_ playstate eventbus-in]] (toggleplay playstate eventbus-in)))
+(register-handler :channel-set-mix (fn [_ [_ data value]] (data/set-mix! 
+                                                (@data @active-list-idx) 
+                                                value)))
+
 (defn control-panel [eventbus-in
                      playstate
                      playstates                     
@@ -75,26 +87,24 @@
     (xform ctl-tpl 
            ["#import-dlg" {:style (display? import-visible?)}]
            ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
-           ["#playbutton" {:on-click #(toggleplay playstate eventbus-in)} ]
+           ["#playbutton" {:on-click #(dispatch-sync [:toggle-play playstate eventbus-in])} ]
            ["#dataview" {:style (display? dataview-visible?)}]
            ["#channel-controls .channel-mix"  {:value (:gain (@data @active-list-idx))
-                                               :on-change #(data/set-mix! 
-                                                            (@data @active-list-idx) 
-                                                            (cljs.reader/read-string (.. % -target -value)))}]
+                                               :on-change #(dispatch-sync 
+                                                            [:channel-set-mix data (cljs.reader/read-string (.. % -target -value))])}]
            ["#dataview .datalist li" :* (data-item (:items (@data @active-list-idx)) eventbus-in) ]
            ["#dataview .nav-tabs li" :* (data-tab-item @data @active-list-idx eventbus-in) ]
            ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
                                                       idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
-                                                  (reset! active-list-idx idx) )}]
-           ["#ejectbutton" {:on-click #(reset! dataview-visible? (not @dataview-visible?))} ]
+                                                  (dispatch-sync [:set-active-channel idx]) )}]
+           ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
            ["#play-state" (playstates @playstate)]           
            ["#clear-screen" {:on-click #(put! eventbus-in :clear)}]
            ["#toggle-import-dlg" {:on-click #(reset! import-visible? (not @import-visible?))}]
            ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
            ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
            ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
-           ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]
-           
+           ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]           
            ["#ipm" {:value (Math/floor (* 60  (:items-per-sec @config)))}]
            ["#playmode .drizzle" {:on-change #(set-playmode! eventbus-in playmode "drizzle")}]
            ["#playmode .pairs" {:on-change #(set-playmode! eventbus-in playmode "pairs")}]
