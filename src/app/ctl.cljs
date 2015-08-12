@@ -4,19 +4,21 @@
             [app.datasource :as data]
             [cljs.reader]
             [reagent.core :as reagent :refer [atom]]
+
             [re-frame.core :refer [register-handler 
                                    register-sub
                                    dispatch-sync
                                    subscribe]])
   (:require-macros [app.templates :refer [deftmpl]]
-                   [cljs.core.async.macros :refer [go]]))
+                   [cljs.core.async.macros :refer [go]]
+                   [reagent.ratom :refer [reaction]]))
+
 
 (defn reload-hook []
   (println "RELOAD CTL"))
 
 (def controls-visible (atom true))
 (def import-visible? (atom false))
-(def dataview-visible? (atom false))
 (def active-list-idx (atom 0))
 
 (defn start [eventbus-in]
@@ -67,13 +69,20 @@
              :aria-hidden "true"
              :on-click #(data/toggle-muted (data i))} ]]))
 
-;todo switch to using app-db
-(register-handler :toggle-dataview-visibility #(reset! dataview-visible? (not @dataview-visible?)))
+(register-sub :dataview-visible? (fn [db _] (println "DB " @db) (reaction (:dataview-visible? @db))))
+
+;todo switch to using app-db, move to handlers.cljs, 
+
+
 (register-handler :set-active-channel (fn [_ [_ idx]] (reset! active-list-idx idx) ))
 (register-handler :toggle-play (fn [_ [_ playstate eventbus-in]] (toggleplay playstate eventbus-in)))
 (register-handler :channel-set-mix (fn [_ [_ data value]] (data/set-mix! 
                                                 (@data @active-list-idx) 
                                                 value)))
+
+(defn dataview-visibility []
+  (let [visible? (subscribe [:dataview-visible?])]
+    {:style (display? visible?)}))
 
 (defn control-panel [eventbus-in
                      playstate
@@ -88,7 +97,7 @@
            ["#import-dlg" {:style (display? import-visible?)}]
            ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
            ["#playbutton" {:on-click #(dispatch-sync [:toggle-play playstate eventbus-in])} ]
-           ["#dataview" {:style (display? dataview-visible?)}]
+           ["#dataview" (dataview-visibility)]
            ["#channel-controls .channel-mix"  {:value (:gain (@data @active-list-idx))
                                                :on-change #(dispatch-sync 
                                                             [:channel-set-mix data (cljs.reader/read-string (.. % -target -value))])}]

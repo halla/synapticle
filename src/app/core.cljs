@@ -1,5 +1,6 @@
 (ns app.core
   (:require [reagent.core :as reagent :refer [atom]]
+            [re-frame.core :refer [dispatch-sync]]
             [app.screen :as screen]
             [app.drizzle :as drizzle]
             [app.pairs :as pairs]
@@ -9,6 +10,7 @@
             [app.datasource :as data]
             [app.representation :as reps]
             [app.ctl :as ctl]
+            [app.handlers]
             [cljsjs.jquery]
             [cljs.core.async :refer [chan mult tap <!]]
             [dragonmark.web.core :as dw :refer [xf xform]])
@@ -109,4 +111,5 @@
          (fn [evt]
            (.toggle (js/jQuery "nav"))))
 
+(dispatch-sync [:initialize-db])
 (restart)
