@@ -15,20 +15,11 @@
 
 (def import-visible? (atom false))
 
-
 (defn restart [eventbus-in]
   (put! eventbus-in :restart))
 
 (deftmpl ctl-tpl "controls.html")
 
-(defn set-playmode! [eventbus-in playmode mode]
-  (reset! playmode mode)
-  (restart eventbus-in))
-
-
-(defn set-randomize [eventbus-in randomize? value]
-  (reset! randomize? value)
-  (restart eventbus-in))
 
 (defn display? [visible?]
   (println "VISIBLE" @visible?)
@@ -38,7 +29,6 @@
 
 (defn data-item [items eventbus-in]
   (for [item items] [:div  [:span item] [:button {:on-click #(dispatch-sync [:delete item])} "D"]]))
-
 
 (defn data-tab-item [data active-idx eventbus-in]
   (for [i (range (count data))] 
@@ -54,18 +44,18 @@
     {:style (display? visible?)}))
 
 (defn control-panel [eventbus-in
-                     playstate
                      playstates                     
-                     playmode
-                     randomize?
                      data]
   (let [active-list-idx (subscribe [:active-list-idx])
-        items-per-sec (subscribe [:items-per-sec])]
+        items-per-sec (subscribe [:items-per-sec])
+        playmode (subscribe [:playmode])
+        playstate (subscribe [:playstate])
+        randomize? (subscribe [:randomize])]
     (fn []
       (xform ctl-tpl 
              ["#import-dlg" {:style (display? import-visible?)}]
              ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
-             ["#playbutton" {:on-click #(dispatch-sync [:toggle-play playstate eventbus-in])} ]
+             ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" (dataview-visibility)]
              ["#channel-controls .channel-mix"  {:value (:gain (@data @active-list-idx))
                                                  :on-change #(dispatch-sync 
@@ -84,11 +74,11 @@
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
              ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]           
              ["#ipm" {:value (Math/floor (* 60  items-per-sec))}]
-             ["#playmode .drizzle" {:on-change #(set-playmode! eventbus-in playmode "drizzle")}]
-             ["#playmode .pairs" {:on-change #(set-playmode! eventbus-in playmode "pairs")}]
-             ["#playmode .single" {:on-change #(set-playmode! eventbus-in playmode "single")}]
+             ["#playmode .drizzle" {:on-change #(dispatch-sync [:set-playmode "drizzle"])}]
+             ["#playmode .pairs" {:on-change #(dispatch-sync [:set-playmode "pairs"])}]
+             ["#playmode .single" {:on-change #(dispatch-sync [:set-playmode "single"])}]
              ["#ipm" {:on-input (fn [evt] (dispatch-sync [:set-ipm (.. evt -target -value )]))}]
              ["#doRandomize" (if @randomize? {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
-             ["#doRandomize" {:on-click #(set-randomize eventbus-in randomize? (.. % -target -checked))}]
+             ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              ))))

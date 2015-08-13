@@ -10,7 +10,7 @@
             [app.datasource :as data]
             [app.representation :as reps]
             [app.ctl :as ctl]
-            [app.handlers]
+            [app.handlers :as handlers]
             [app.subscribables]
             [cljsjs.jquery]
             [cljs.core.async :refer [chan mult tap <!]]
@@ -31,67 +31,31 @@
 (def eventbus-in (chan))
 (def eventbus-out (mult eventbus-in))
 
-(defonce print-timer (atom 0))
-(defonce animation-timer (atom 0))
-
-(def playstates {:stopped "Stopped"
-                 :running "Running"})
-(defonce playstate (atom :stopped))
-
-(def playmodes {"drizzle" (drizzle/drizzle data/wordlists screen/divs)
-                "pairs" (pairs/pairs data/wordlists screen/divs)
-                "single" (players/single data/wordlists screen/divs)})
-(defonce playmode (atom "drizzle"))
-(defonce randomize? (atom true))
-
-(defn get-player []  
-  (playmodes @playmode))
-
 
 (defn mount-root []
   (reagent/render [ctl/control-panel eventbus-in
-                   playstate
-                   playstates                  
-                   playmode                   
-                   randomize?
+                   handlers/playstates                  
                    data/wordlists
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component data/wordlists eventbus-in]
                   (.getElementById js/document "wordinputs"))
-  (reagent/render [player/render (get-player)] (.getElementById js/document "screen")))
-
-(let [items-per-sec (subscribe [:items-per-sec])]
-  (defn start []
-    (let [interval-new (/ 1000 @items-per-sec)
-          interval-anim 50
-          step-func (if @randomize? player/step-rnd player/step-fwd)]
-      (reset! print-timer  (js/setInterval #(step-func (get-player)) interval-new))
-      (reset! animation-timer  (js/setInterval #(player/animation (get-player)) interval-anim))
-      (reset! playstate :running))))
-
-(defn stop []
-  (js/clearInterval @print-timer )
-  (js/clearInterval @animation-timer )
-  (reset! playstate :stopped))
+  (let [playmode (subscribe [:playmode])]
+    (reagent/render [player/render (handlers/get-player @playmode)] (.getElementById js/document "screen"))))
 
 
 (defn restart []
-  (println "RESTART" @randomize?)
   (screen/clear)
   (mount-root)
-  (stop)
-  (start))
+  (dispatch-sync [:stop])
+  (dispatch-sync [:start]))
 
 (let [eventbus (tap eventbus-out (chan))]
   (go (loop [] 
         (let [e (<! eventbus)]
           (println "EVENT" e)
           (cond 
-            (= e :start) (start)
-            (= e :stop) (stop)
             (= e :restart) (restart)
             (= e :textarea-import) (importer/textarea-import! data/words eventbus-in)
-            (= e :data-updated) "do smtg"
             )
           (recur)))))
 
