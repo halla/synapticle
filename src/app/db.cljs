@@ -3,4 +3,5 @@
 
 
 (def default-value 
-  {:dataview-visible? true})
+  {:dataview-visible? true
+   :active-list-idx 0})
