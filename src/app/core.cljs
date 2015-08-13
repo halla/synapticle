@@ -31,6 +31,11 @@
 (def eventbus-in (chan))
 (def eventbus-out (mult eventbus-in))
 
+(dispatch-sync [:initialize-db])
+
+(defn render-player []
+  (let [playmode (subscribe [:playmode])]   
+    #(player/render (handlers/get-player @playmode))))
 
 (defn mount-root []
   (reagent/render [ctl/control-panel eventbus-in
@@ -39,8 +44,7 @@
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component data/wordlists eventbus-in]
                   (.getElementById js/document "wordinputs"))
-  (let [playmode (subscribe [:playmode])]
-    (reagent/render [player/render (handlers/get-player @playmode)] (.getElementById js/document "screen"))))
+  (reagent/render [render-player] (.getElementById js/document "screen")))
 
 
 (defn restart []
@@ -48,6 +52,7 @@
   (mount-root)
   (dispatch-sync [:stop])
   (dispatch-sync [:start]))
+
 
 (let [eventbus (tap eventbus-out (chan))]
   (go (loop [] 
@@ -63,5 +68,5 @@
          (fn [evt]
            (.toggle (js/jQuery "nav"))))
 
-(dispatch-sync [:initialize-db])
+
 (restart)
