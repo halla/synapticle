@@ -54,9 +54,10 @@
 
 (defn textfield-component [wordstore eventbus-in]
   (let [active-list-idx (subscribe [:active-list-idx])]
-    [:input {:type "text" 
-             :value @nextword
-             :placeholder (str "Add item to " (:title (@data/wordlists @active-list-idx)))
-             :class "form-control"
-             :on-change #(reset! nextword (-> % .-target .-value))
-             :on-key-down (keydownhandler wordstore @nextword eventbus-in active-list-idx)}]))
+    (fn []
+      [:input {:type "text" 
+               :value @nextword
+               :placeholder (str "Add item to " (:title (@data/wordlists @active-list-idx)))
+               :class "form-control"
+               :on-change #(reset! nextword (-> % .-target .-value))
+               :on-key-down (keydownhandler wordstore @nextword eventbus-in active-list-idx)}])))

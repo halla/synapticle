@@ -3,8 +3,7 @@
             [dragonmark.web.core :as dw :refer [xf xform]]
             [app.datasource :as data]
             [cljs.reader]
-            [reagent.core :as reagent :refer [atom]]
-
+            [reagent.core :as reagent :refer [atom]]            
             [re-frame.core :refer [register-handler 
                                    register-sub
                                    dispatch-sync
@@ -96,11 +95,9 @@
                      playmode
                      config
                      randomize?
-                     data
-                     ]
+                     data]
   (let [active-list-idx (subscribe [:active-list-idx])]
-
-    (when true
+    (fn []
       (xform ctl-tpl 
              ["#import-dlg" {:style (display? import-visible?)}]
              ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
