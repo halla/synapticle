@@ -98,8 +98,7 @@
             (= e :restart) (restart)
             (= e :textarea-import) (importer/textarea-import! data/words eventbus-in)
             (= e :data-updated) "do smtg"
-            (and (map? e)
-                 (contains? e :delete)) (data/delete! @ctl/active-list-idx (:delete e)))
+            )
           (recur)))))
 
 (listen! (sel "#screen") :click 

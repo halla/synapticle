@@ -12,7 +12,9 @@
 (register-handler :toggle-dataview-visibility (fn [db _] (update-in db [:dataview-visible?] #(not %))))
 
 ;; todo decouple this
-(register-handler :clear (fn [db _] 
-  (data/clear (@data/wordlists @ctl/active-list-idx))
-  (screen/clear)
-  db))
+(register-handler :clear 
+                  (fn [db _] 
+                    (data/clear (@data/wordlists (:active-list-idx db)))
+                    (screen/clear)
+                    db))
+
