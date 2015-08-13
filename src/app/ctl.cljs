@@ -72,9 +72,15 @@
              ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
              ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]           
-             ["#playmode .drizzle" {:on-change #(dispatch-sync [:set-playmode "drizzle"])}]
-             ["#playmode .pairs" {:on-change #(dispatch-sync [:set-playmode "pairs"])}]
-             ["#playmode .single" {:on-change #(dispatch-sync [:set-playmode "single"])}]
+             ["#playmode .drizzle" {:on-change (fn [] 
+                                                 (dispatch-sync [:set-playmode "drizzle"])
+                                                 (dispatch-sync [:start]))}]
+             ["#playmode .pairs" {:on-change (fn [] 
+                                               (dispatch-sync [:set-playmode "pairs"])
+                                               (dispatch-sync [:start]))}]
+             ["#playmode .single" {:on-change (fn [] 
+                                                (dispatch-sync [:set-playmode "single"])
+                                                (dispatch-sync [:start]))}]
              ["#ipm" {:value (Math/floor (* 60  @items-per-sec))
                       :on-change (fn [evt] (dispatch-sync [:set-ipm 
                                                            (cljs.reader/read-string (.. evt -target -value ))]))}]
