@@ -22,7 +22,6 @@
 
 
 (defn display? [visible?]
-  (println "VISIBLE" @visible?)
   (if @visible?
     "display: block;"
     "display: none;"))
@@ -73,11 +72,12 @@
              ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
              ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]           
-             ["#ipm" {:value (Math/floor (* 60  items-per-sec))}]
              ["#playmode .drizzle" {:on-change #(dispatch-sync [:set-playmode "drizzle"])}]
              ["#playmode .pairs" {:on-change #(dispatch-sync [:set-playmode "pairs"])}]
              ["#playmode .single" {:on-change #(dispatch-sync [:set-playmode "single"])}]
-             ["#ipm" {:on-input (fn [evt] (dispatch-sync [:set-ipm (.. evt -target -value )]))}]
+             ["#ipm" {:value (Math/floor (* 60  @items-per-sec))
+                      :on-change (fn [evt] (dispatch-sync [:set-ipm 
+                                                           (cljs.reader/read-string (.. evt -target -value ))]))}]
              ["#doRandomize" (if @randomize? {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]

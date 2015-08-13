@@ -100,4 +100,4 @@
 (register-handler
  :set-ipm
  (fn [db [_ ipm]]
-   (assoc-in db [:items-per-sec] ipm)))
+   (assoc-in db [:items-per-sec] (/ ipm 60))))
