@@ -4,13 +4,10 @@
             [app.datasource :as data]
             [cljs.reader]
             [reagent.core :as reagent :refer [atom]]            
-            [re-frame.core :refer [register-handler 
-                                   register-sub
-                                   dispatch-sync
+            [re-frame.core :refer [dispatch-sync
                                    subscribe]])
   (:require-macros [app.templates :refer [deftmpl]]
-                   [cljs.core.async.macros :refer [go]]
-                   [reagent.ratom :refer [reaction]]))
+                   [cljs.core.async.macros :refer [go]]))
 
 
 (defn reload-hook []
@@ -18,20 +15,9 @@
 
 (def import-visible? (atom false))
 
-(defn start [eventbus-in]
-  (put! eventbus-in :start))
-
-(defn stop [eventbus-in]
-  (put! eventbus-in :stop))
 
 (defn restart [eventbus-in]
   (put! eventbus-in :restart))
-
-(defn toggleplay [playstate eventbus-in]
-  (if (= @playstate :stopped)
-    (start eventbus-in)
-    (stop eventbus-in)))
-
 
 (deftmpl ctl-tpl "controls.html")
 
@@ -39,10 +25,6 @@
   (reset! playmode mode)
   (restart eventbus-in))
 
-(defn set-ipm! [eventbus-in config ipm]
-  (println "IPM" ipm)
-  (swap! config assoc :items-per-sec (/ ipm 60))
-  (restart eventbus-in))
 
 (defn set-randomize [eventbus-in randomize? value]
   (reset! randomize? value)
@@ -66,24 +48,6 @@
              :aria-hidden "true"
              :on-click #(data/toggle-muted (data i))} ]]))
 
-(register-sub :dataview-visible? (fn [db _]  (reaction (:dataview-visible? @db))))
-(register-sub :active-list-idx (fn [db _]  (reaction (:active-list-idx @db))))
-;todo switch to using app-db, move to handlers.cljs, 
-
-
-(register-handler :set-active-channel (fn [db [_ idx]]  (assoc-in db [:active-list-idx] idx) ))
-
-(register-handler :toggle-play (fn [db [_ playstate eventbus-in]] (toggleplay playstate eventbus-in) db))
-(register-handler :channel-set-mix (fn 
-                                     [db [_ data value]] 
-                                     (data/set-mix! 
-                                      (@data (:active-list-idx db)) 
-                                      value)
-                                     db))
-
-(register-handler :delete (fn [db [_ item]] 
-                            (data/delete! (:active-list-idx db) item)
-                            db))
 
 (defn dataview-visibility []
   (let [visible? (subscribe [:dataview-visible?])]
@@ -93,10 +57,10 @@
                      playstate
                      playstates                     
                      playmode
-                     config
                      randomize?
                      data]
-  (let [active-list-idx (subscribe [:active-list-idx])]
+  (let [active-list-idx (subscribe [:active-list-idx])
+        items-per-sec (subscribe [:items-per-sec])]
     (fn []
       (xform ctl-tpl 
              ["#import-dlg" {:style (display? import-visible?)}]
@@ -119,11 +83,11 @@
              ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
              ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]           
-             ["#ipm" {:value (Math/floor (* 60  (:items-per-sec @config)))}]
+             ["#ipm" {:value (Math/floor (* 60  items-per-sec))}]
              ["#playmode .drizzle" {:on-change #(set-playmode! eventbus-in playmode "drizzle")}]
              ["#playmode .pairs" {:on-change #(set-playmode! eventbus-in playmode "pairs")}]
              ["#playmode .single" {:on-change #(set-playmode! eventbus-in playmode "single")}]
-             ["#ipm" {:on-input (fn [evt] (set-ipm! eventbus-in config (.. evt -target -value )))}]
+             ["#ipm" {:on-input (fn [evt] (dispatch-sync [:set-ipm (.. evt -target -value )]))}]
              ["#doRandomize" (if @randomize? {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(set-randomize eventbus-in randomize? (.. % -target -checked))}]
