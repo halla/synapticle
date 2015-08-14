@@ -1,24 +1,16 @@
 (ns app.core
   (:require [reagent.core :as reagent :refer [atom]]
             [re-frame.core :refer [dispatch-sync subscribe]]
-            [app.screen :as screen]
-            [app.drizzle :as drizzle]
-            [app.pairs :as pairs]
             [app.importer :as importer]
-            [app.player :as player]
-            [app.players :as players]
             [app.datasource :as data]
-            [app.representation :as reps]
             [app.ctl :as ctl]
+            [app.views :as views]
             [app.handlers :as handlers]
             [app.subscribables]
             [cljsjs.jquery]
-            [cljs.core.async :refer [chan mult tap <!]]
             [dragonmark.web.core :as dw :refer [xf xform]])
   (:use [domina.css :only [sel]]
-        [domina.events :only [listen! target]])
-  (:require-macros [app.templates :refer [deftmpl]]
-                   [cljs.core.async.macros :refer [go]]))
+        [domina.events :only [listen! target]]))
 
 
 (enable-console-print!)
@@ -31,9 +23,6 @@
 
 (dispatch-sync [:initialize-db])
 
-(defn render-player []
-  (let [playmode (subscribe [:playmode])]   
-    #(player/render (handlers/get-player @playmode))))
 
 (defn mount-root []
   (reagent/render [ctl/control-panel
@@ -42,7 +31,7 @@
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component data/wordlists]
                   (.getElementById js/document "wordinputs"))
-  (reagent/render [render-player] (.getElementById js/document "screen")))
+  (reagent/render [views/render-player] (.getElementById js/document "screen")))
 
 
 
