@@ -36,26 +36,25 @@
 
 ;; single word input field
 
-(defonce nextword (atom ""))
-
-(defn textfield-import! [words word active-list-idx]
-  (data/add-multiple! (@data/wordlists @active-list-idx) (process-input (js->clj word)))
+(defn textfield-import! [words nextword active-list-idx]
+  (data/add-multiple! (@data/wordlists @active-list-idx) (process-input (js->clj @nextword)))
   (reset! nextword ""))
 
 
-(defn keydownhandler [wordstore word active-list-idx]
+(defn keydownhandler [wordstore nextword active-list-idx]
   (fn [e]
     (when (= (.-which e) 27) ;esc
       (reset! nextword ""))
     (when (= (.-key e) "Enter")
-      (textfield-import! wordstore word active-list-idx))))
+      (textfield-import! wordstore nextword active-list-idx))))
 
 (defn textfield-component [wordstore]
-  (let [active-list-idx (subscribe [:active-list-idx])]
+  (let [active-list-idx (subscribe [:active-list-idx])
+        nextword (atom "")]
     (fn []
       [:input {:type "text" 
                :value @nextword
                :placeholder (str "Add item to " (:title (@data/wordlists @active-list-idx)))
                :class "form-control"
                :on-change #(reset! nextword (-> % .-target .-value))
-               :on-key-down (keydownhandler wordstore @nextword active-list-idx)}])))
+               :on-key-down (keydownhandler wordstore nextword active-list-idx)}])))
