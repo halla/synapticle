@@ -47,7 +47,7 @@ body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; 
 #fileupload-panel { display: none;}
 
 #dataview .datalist { max-height: 300px; overflow-y: scroll; }
-.item { position: absolute; }
+.item { position: absolute; max-width: 400px; line-height: 1.15}
 
 
 .help-text { font-size: 14px; color: #777; max-width: 500px; }

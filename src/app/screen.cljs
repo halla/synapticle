@@ -14,8 +14,8 @@
 
 (defn collides? [div1 div2]
   ;; todo, replace naive guess with something less naive
-  (or (< (Math/abs (- (:y div1) (:y div2))) 100)
-      (< (Math/abs (- (:x div1) (:x div2))) 300)))
+  (and (< (Math/abs (- (:y div1) (:y div2))) 100)
+       (< (Math/abs (- (:x div1) (:x div2))) 400)))
 
 
 (defn divs-collision? [div2 divset]  
