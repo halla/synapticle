@@ -1,6 +1,6 @@
 (ns app.core
   (:require [reagent.core :as reagent :refer [atom]]
-            [re-frame.core :refer [dispatch-sync subscribe]]
+            [re-frame.core :refer [dispatch-sync]]
             [app.importer :as importer]
             [app.datasource :as data]
             [app.ctl :as ctl]

@@ -1,6 +1,7 @@
-(ns views.cljs
+(ns app.views
   (:require [app.player :as player]
-            [app.handlers :as handlers]))
+            [app.handlers :as handlers]
+            [re-frame.core :refer [subscribe]]))
 
 
 (defn render-player []
