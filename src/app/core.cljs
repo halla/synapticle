@@ -28,8 +28,6 @@
   (reagent.core/flush)
   (println "RELOAD"))
 
-(def eventbus-in (chan))
-(def eventbus-out (mult eventbus-in))
 
 (dispatch-sync [:initialize-db])
 
@@ -38,35 +36,19 @@
     #(player/render (handlers/get-player @playmode))))
 
 (defn mount-root []
-  (reagent/render [ctl/control-panel eventbus-in
+  (reagent/render [ctl/control-panel
                    handlers/playstates                  
                    data/wordlists
                    ] (.getElementById js/document "controls"))
-  (reagent/render [importer/textfield-component data/wordlists eventbus-in]
+  (reagent/render [importer/textfield-component data/wordlists]
                   (.getElementById js/document "wordinputs"))
   (reagent/render [render-player] (.getElementById js/document "screen")))
 
 
-(defn restart []
-  (screen/clear)
-  (mount-root)
-  (dispatch-sync [:stop])
-  (dispatch-sync [:start]))
-
-
-(let [eventbus (tap eventbus-out (chan))]
-  (go (loop [] 
-        (let [e (<! eventbus)]
-          (println "EVENT" e)
-          (cond 
-            (= e :restart) (restart)
-            (= e :textarea-import) (importer/textarea-import! data/words eventbus-in)
-            )
-          (recur)))))
 
 (listen! (sel "#screen") :click 
          (fn [evt]
            (.toggle (js/jQuery "nav"))))
 
 
-(restart)
+(mount-root)

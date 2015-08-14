@@ -20,10 +20,10 @@
     "display: block;"
     "display: none;"))
 
-(defn data-item [items eventbus-in]
+(defn data-item [items]
   (for [item items] [:div  [:span item] [:button {:on-click #(dispatch-sync [:delete item])} "D"]]))
 
-(defn data-tab-item [data active-idx eventbus-in]
+(defn data-tab-item [data active-idx]
   (for [i (range (count data))] 
     [:div {:class (str "muted-" (:muted? (data i)) (when (= active-idx i) " active"))}
      [:a {:data-idx i} (:title (data i))]
@@ -31,8 +31,7 @@
              :aria-hidden "true"
              :on-click #(data/toggle-muted (data i))} ]]))
 
-(defn control-panel [eventbus-in
-                     playstates                     
+(defn control-panel [playstates                     
                      data]
   (let [active-list-idx (subscribe [:active-list-idx])
         items-per-sec (subscribe [:items-per-sec])
@@ -50,8 +49,8 @@
              ["#channel-controls .channel-mix"  {:value (:gain (@data @active-list-idx))
                                                  :on-change #(dispatch-sync 
                                                               [:channel-set-mix data (cljs.reader/read-string (.. % -target -value))])}]
-             ["#dataview .datalist li" :* (data-item (:items (@data @active-list-idx)) eventbus-in) ]
-             ["#dataview .nav-tabs li" :* (data-tab-item @data @active-list-idx eventbus-in) ]
+             ["#dataview .datalist li" :* (data-item (:items (@data @active-list-idx))) ]
+             ["#dataview .nav-tabs li" :* (data-tab-item @data @active-list-idx) ]
              ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
                                                         idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
                                                     (dispatch-sync [:set-active-channel idx]) )}]
@@ -62,7 +61,7 @@
              ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
-             ["#textareaimport-button" {:on-click #(put! eventbus-in :textarea-import)}]           
+             ["#textareaimport-button" {:on-click #(dispatch-sync [:textarea-import])}]           
              ["#playmode .drizzle" {:on-change (fn [] 
                                                  (dispatch-sync [:set-playmode "drizzle"])
                                                  (dispatch-sync [:start]))}]

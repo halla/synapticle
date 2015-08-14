@@ -4,6 +4,7 @@
             [app.db :as db]
             [app.screen :as screen]
             [app.player :as player]
+            [app.importer :as importer]
             [app.datasource :as data]
             [app.drizzle :as drizzle]
             [app.pairs :as pairs]
@@ -106,3 +107,9 @@
  :set-ipm
  (fn [db [_ ipm]]
    (assoc-in db [:items-per-sec] (/ ipm 60))))
+
+(register-handler
+ :textarea-import
+ (fn [db [_]]
+   (importer/textarea-import! data/words)
+   db))

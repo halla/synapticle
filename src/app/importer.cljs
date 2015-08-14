@@ -27,32 +27,30 @@
     (vec (distinct (sequence process-pipeline in)))))
 
 
-(defn textarea-import! [words eventbus-in]
+(defn textarea-import! [words]
   (let [ws (js->clj (.-value (.getElementById js/document "textareaimport")))
         ws2 (process-input ws)
         active-list-idx (subscribe [:active-list-idx])]
     (data/add-multiple! (@data/wordlists @active-list-idx) ws2)
-    (aset (.getElementById js/document "textareaimport") "value" "")
-    (put! eventbus-in :data-updated)))
+    (aset (.getElementById js/document "textareaimport") "value" "")))
 
 ;; single word input field
 
 (defonce nextword (atom ""))
 
-(defn textfield-import! [words word eventbus-in active-list-idx]
+(defn textfield-import! [words word active-list-idx]
   (data/add-multiple! (@data/wordlists @active-list-idx) (process-input (js->clj word)))
-  (reset! nextword "")
-  (put! eventbus-in :data-updated))
+  (reset! nextword ""))
 
 
-(defn keydownhandler [wordstore word eventbus-in active-list-idx]
+(defn keydownhandler [wordstore word active-list-idx]
   (fn [e]
     (when (= (.-which e) 27) ;esc
       (reset! nextword ""))
     (when (= (.-key e) "Enter")
-      (textfield-import! wordstore word eventbus-in active-list-idx))))
+      (textfield-import! wordstore word active-list-idx))))
 
-(defn textfield-component [wordstore eventbus-in]
+(defn textfield-component [wordstore]
   (let [active-list-idx (subscribe [:active-list-idx])]
     (fn []
       [:input {:type "text" 
@@ -60,4 +58,4 @@
                :placeholder (str "Add item to " (:title (@data/wordlists @active-list-idx)))
                :class "form-control"
                :on-change #(reset! nextword (-> % .-target .-value))
-               :on-key-down (keydownhandler wordstore @nextword eventbus-in active-list-idx)}])))
+               :on-key-down (keydownhandler wordstore @nextword active-list-idx)}])))
