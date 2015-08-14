@@ -5,6 +5,7 @@
 ;; re-frame style subs
 
 (register-sub :dataview-visible? (fn [db _]  (reaction (:dataview-visible? @db))))
+(register-sub :import-visible? (fn [db _]  (reaction (:import-visible? @db))))
 (register-sub :active-list-idx (fn [db _]  (reaction (:active-list-idx @db))))
 (register-sub :items-per-sec (fn [db _] (reaction (:items-per-sec @db))))
 (register-sub :playmode (fn [db _] (reaction (:playmode @db))))

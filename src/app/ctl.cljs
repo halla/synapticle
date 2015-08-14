@@ -13,13 +13,7 @@
 (defn reload-hook []
   (println "RELOAD CTL"))
 
-(def import-visible? (atom false))
-
-(defn restart [eventbus-in]
-  (put! eventbus-in :restart))
-
 (deftmpl ctl-tpl "controls.html")
-
 
 (defn display? [visible?]
   (if @visible?
@@ -37,11 +31,6 @@
              :aria-hidden "true"
              :on-click #(data/toggle-muted (data i))} ]]))
 
-
-(defn dataview-visibility []
-  (let [visible? (subscribe [:dataview-visible?])]
-    {:style (display? visible?)}))
-
 (defn control-panel [eventbus-in
                      playstates                     
                      data]
@@ -49,13 +38,15 @@
         items-per-sec (subscribe [:items-per-sec])
         playmode (subscribe [:playmode])
         playstate (subscribe [:playstate])
-        randomize? (subscribe [:randomize])]
+        randomize? (subscribe [:randomize])
+        dataview-visible? (subscribe [:dataview-visible?])
+        import-visible? (subscribe [:import-visible?])]
     (fn []
       (xform ctl-tpl 
              ["#import-dlg" {:style (display? import-visible?)}]
              ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
-             ["#dataview" (dataview-visibility)]
+             ["#dataview" {:style (display? dataview-visible?)}]
              ["#channel-controls .channel-mix"  {:value (:gain (@data @active-list-idx))
                                                  :on-change #(dispatch-sync 
                                                               [:channel-set-mix data (cljs.reader/read-string (.. % -target -value))])}]
@@ -67,7 +58,7 @@
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
              ["#play-state" (playstates @playstate)]           
              ["#clear-screen" {:on-click #(dispatch-sync [:clear])}]
-             ["#toggle-import-dlg" {:on-click #(reset! import-visible? (not @import-visible?))}]
+             ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
              ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]

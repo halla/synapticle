@@ -18,7 +18,7 @@
                 "pairs" (pairs/pairs data/wordlists screen/divs)
                 "single" (players/single data/wordlists screen/divs)})
 
-(defn get-player [mode]  
+(defn get-player [mode]
   (playmodes mode))
 
 ;: -- re-frame style handlers
@@ -30,6 +30,11 @@
 (register-handler 
  :toggle-dataview-visibility 
  (fn [db _] (update-in db [:dataview-visible?] #(not %))))
+
+(register-handler 
+ :toggle-import-visibility 
+ (fn [db _] (update-in db [:import-visible?] #(not %))))
+
 
 ;; todo decouple this
 (register-handler 

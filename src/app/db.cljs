@@ -9,5 +9,6 @@
    :print-timer 0
    :animation-timer 0
    :dataview-visible? true
+   :import-visible? false
    :active-list-idx 0
    :items-per-sec 2.0})
