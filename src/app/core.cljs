@@ -7,10 +7,7 @@
             [app.views :as views]
             [app.handlers :as handlers]
             [app.subscribables]
-            [cljsjs.jquery]
-            [dragonmark.web.core :as dw :refer [xf xform]])
-  (:use [domina.css :only [sel]]
-        [domina.events :only [listen! target]]))
+            [cljsjs.jquery]))
 
 
 (enable-console-print!)
@@ -32,12 +29,6 @@
   (reagent/render [importer/textfield-component data/wordlists]
                   (.getElementById js/document "wordinputs"))
   (reagent/render [views/render-player] (.getElementById js/document "screen")))
-
-
-
-(listen! (sel "#screen") :click 
-         (fn [evt]
-           (.toggle (js/jQuery "nav"))))
 
 
 (mount-root)

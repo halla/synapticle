@@ -47,7 +47,10 @@
         (speak)
         (reload :on-jsload 'app.core/main)
         (cljs-repl)
-        (cljs :source-map true :optimizations :none)))
+        (cljs :foreign-libs [{:file "html/js/mousetrap.min.js"
+                              :provides ["mousetrap"]}] 
+              :source-map true 
+              :optimizations :none)))
 
 (deftask test []
   (set-env! 
@@ -59,8 +62,22 @@
         (reload)
         (cljs-repl)
 #_        (cljs-test-node-runner :namespaces '[app.misc-test])
-        (cljs :source-map true :optimizations :none)
+        (cljs :foreign-libs [{:file "html/js/mousetrap.min.js"
+                              :provides ["mousetrap"]}]
+              :source-map true 
+              :optimizations :none)
  #_       (run-cljs-test)))
+
+(deftask prod []
+  (set-env! :source-paths #{"src"})
+  (comp (serve :dir "target/")
+        (watch)
+        (reload :on-jsload 'app.core/main)
+        (cljs-repl)
+        (cljs :foreign-libs [{:file "html/js/mousetrap.min.js"
+                              :provides ["mousetrap"]}]
+              :externs ["html/js/mousetrap.min.js"] 
+              :optimizations :advanced)))
 
 (deftask build []
   (set-env! :source-paths #{"src"})

@@ -3,11 +3,14 @@
             [dragonmark.web.core :as dw :refer [xf xform]]
             [app.datasource :as data]
             [cljs.reader]
+            [mousetrap]
             [reagent.core :as reagent :refer [atom]]            
             [re-frame.core :refer [dispatch-sync
                                    subscribe]])
   (:require-macros [app.templates :refer [deftmpl]]
-                   [cljs.core.async.macros :refer [go]]))
+                   [cljs.core.async.macros :refer [go]])
+  (:use [domina.css :only [sel]]
+        [domina.events :only [listen! target]]))
 
 
 (defn reload-hook []
@@ -78,3 +81,16 @@
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              ))))
+
+(listen! (sel "#screen") :click 
+         (fn [evt]
+           (.toggle (js/jQuery "nav"))))
+
+;(.addEventListener js/document)
+#_(listen! :keydown
+         (fn [evt]
+           (enable-console-print!)
+            (.toggle (js/jQuery "nav"))))
+
+(.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
+
