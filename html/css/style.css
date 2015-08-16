@@ -5,6 +5,9 @@
   src: local('Open Sans'), local('OpenSans'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
 }
 body { font-size: 20px; font-family: 'Open Sans', sans-serif; overflow: hidden; }
+
+input[type=range] { min-width: 100px; }
+
 #screen {  position:relative; overflow: hidden; height:100%; background-color: #ffe}
 
 .nav-tabs > li  a:hover {
