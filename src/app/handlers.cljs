@@ -1,5 +1,5 @@
 (ns app.handlers
-  (:require [re-frame.core :refer [register-handler dispatch-sync]]
+  (:require [re-frame.core :refer [register-handler dispatch-sync after]]
             [cljs.core.async :refer [put!]]
             [app.db :as db]
             [app.screen :as screen]
@@ -11,6 +11,10 @@
             [app.players :as players]            
             [app.ctl :as ctl]))
 
+
+(def ->ls (after db/cfg->ls!))
+
+(def cfg-mw [->ls])
 
 (def playstates {:stopped "Stopped"
                  :running "Running"})
@@ -26,7 +30,7 @@
 
 (register-handler 
  :initialize-db 
- (fn [_ _] db/default-value))
+ (fn [_ _] (merge db/default-value (db/ls->cfg))))
 
 (register-handler 
  :toggle-dataview-visibility 
@@ -79,6 +83,7 @@
 
 (register-handler 
  :channel-set-mix
+ cfg-mw
  (fn 
    [db [_ data value]] 
    (data/set-mix! 
@@ -93,23 +98,27 @@
 
 (register-handler
  :set-playmode
+ cfg-mw
  (fn [db [_ playmode]]
    (assoc-in db [:playmode] playmode)))
 
 
 (register-handler 
- :delete 
+ :delete
+ cfg-mw
  (fn [db [_ item]] 
    (data/delete! (:active-list-idx db) item)
    db))
 
 (register-handler
  :set-ipm
+ cfg-mw
  (fn [db [_ ipm]]
    (assoc-in db [:items-per-sec] (/ ipm 60))))
 
 (register-handler
  :textarea-import
+ cfg-mw
  (fn [db [_]]
    (importer/textarea-import! data/words)
    db))
