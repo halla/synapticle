@@ -75,8 +75,10 @@
                                                 (dispatch-sync [:set-playmode "single"])
                                                 (dispatch-sync [:start]))}]
              ["#ipm" {:value (Math/floor (* 60  @items-per-sec))
-                      :on-change (fn [evt] (dispatch-sync [:set-ipm
-                                                           (cljs.reader/read-string (.. evt -target -value ))]))}]
+                      :on-change (fn [evt] 
+                                   (dispatch-sync [:set-ipm
+                                                   (cljs.reader/read-string (.. evt -target -value ))])
+                                   (dispatch-sync [:start]))}]
              ["#doRandomize" (if @randomize? {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
