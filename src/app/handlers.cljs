@@ -101,8 +101,9 @@
 (register-handler
  :textarea-import
  cfg-mw
- (fn [db [_]]
-   (importer/textarea-import! data/words)
+ (fn [db [_ words]]
+   (data/add-multiple! (@data/wordlists (:active-list-idx db)) 
+                       (importer/process-input words))
    db))
 
 (register-handler 
@@ -127,3 +128,9 @@
  :mute
  (fn [db [_ channel]]
    (data/toggle-muted channel)))
+
+(register-handler
+ :words-add
+ (fn [db [_ words]]
+   (data/add-multiple! (@data/wordlists (:active-list-idx db)) words)
+   db))

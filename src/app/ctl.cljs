@@ -66,7 +66,13 @@
              ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
-             ["#textareaimport-button" {:on-click #(dispatch-sync [:textarea-import])}]           
+             ["#textareaimport-button" {:on-click 
+                                        (fn [] 
+                                          (dispatch-sync [:textarea-import
+                                                          (.-value (.getElementById js/document "textareaimport"))])
+                                          (aset (.getElementById js/document "textareaimport") "value" "")
+                                          
+                                                        )}]           
              ["#playmode .drizzle" {:on-change (fn [] 
                                                  (dispatch-sync [:set-playmode "drizzle"])
                                                  (dispatch-sync [:start]))}]
