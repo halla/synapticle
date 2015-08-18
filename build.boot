@@ -13,6 +13,7 @@
                  [dragonmark/web "0.1.8"]
                  [cljsjs/jquery "1.9.1-0"]
                  [cljsjs/jquery-ui "1.11.3-1"]
+                 [cljsjs/mousetrap "1.5.3-0"]
                  [org.clojure/clojurescript "1.7.48" ]
                  [boot-cljs-test/node-runner "0.1.0" :scope "test"]
                  [pandeiro/boot-http    "0.6.3"      :scope "test"]
@@ -47,8 +48,7 @@
         (speak)
         (reload :on-jsload 'app.core/main)
         (cljs-repl)
-        (cljs :foreign-libs [{:file "html/js/mousetrap.min.js"
-                              :provides ["mousetrap"]}] 
+        (cljs 
               :source-map true 
               :optimizations :none)))
 
@@ -62,9 +62,7 @@
         (reload)
         (cljs-repl)
 #_        (cljs-test-node-runner :namespaces '[app.misc-test])
-        (cljs :foreign-libs [{:file "html/js/mousetrap.min.js"
-                              :provides ["mousetrap"]}]
-              :source-map true 
+        (cljs :source-map true 
               :optimizations :none)
  #_       (run-cljs-test)))
 
@@ -74,10 +72,7 @@
         (watch)
         (reload :on-jsload 'app.core/main)
         (cljs-repl)
-        (cljs :foreign-libs [{:file "html/js/mousetrap.min.js"
-                              :provides ["mousetrap"]}]
-              :externs ["html/js/mousetrap.min.js"] 
-              :optimizations :advanced)))
+        (cljs :optimizations :advanced)))
 
 (deftask build []
   (set-env! :source-paths #{"src"})

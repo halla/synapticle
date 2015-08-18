@@ -3,7 +3,7 @@
             [dragonmark.web.core :as dw :refer [xf xform]]
             [app.datasource :as data]
             [cljs.reader]
-            [mousetrap]
+            [cljsjs.mousetrap]
             [reagent.core :as reagent :refer [atom]]            
             [re-frame.core :refer [dispatch-sync
                                    subscribe]])
@@ -75,7 +75,7 @@
                                                 (dispatch-sync [:set-playmode "single"])
                                                 (dispatch-sync [:start]))}]
              ["#ipm" {:value (Math/floor (* 60  @items-per-sec))
-                      :on-change (fn [evt] (dispatch-sync [:set-ipm 
+                      :on-change (fn [evt] (dispatch-sync [:set-ipm
                                                            (cljs.reader/read-string (.. evt -target -value ))]))}]
              ["#doRandomize" (if @randomize? {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
@@ -92,5 +92,7 @@
            (enable-console-print!)
             (.toggle (js/jQuery "nav"))))
 
+
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
+
 
