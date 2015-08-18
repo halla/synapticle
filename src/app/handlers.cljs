@@ -41,19 +41,6 @@
  (fn [db _] (update-in db [:import-visible?] #(not %))))
 
 
-;; todo decouple this
-(register-handler 
- :clear 
- (fn [db _] 
-   (data/clear (@data/wordlists (:active-list-idx db)))
-   (screen/clear)
-   db))
-
-(register-handler 
- :set-active-channel 
- (fn [db [_ idx]]  (assoc-in db [:active-list-idx] idx) ))
-
-
 (defn start [db [_]]
   (let [interval-new (/ 1000 (:items-per-sec db))
         interval-anim 50
@@ -80,17 +67,6 @@
      (start db [])
      (stop db []))))
 
-
-(register-handler 
- :channel-set-mix
- cfg-mw
- (fn 
-   [db [_ data value]] 
-   (data/set-mix! 
-    (@data (:active-list-idx db)) 
-    value)
-   db))
-
 (register-handler
  :set-randomize
  (fn [db [_ randomize?]]
@@ -102,6 +78,17 @@
  (fn [db [_ playmode]]
    (assoc-in db [:playmode] playmode)))
 
+(register-handler
+ :set-ipm
+ cfg-mw
+ (fn [db [_ ipm]]
+   (assoc-in db [:items-per-sec] (/ ipm 60))))
+
+(register-handler 
+ :set-active-channel 
+ (fn [db [_ idx]]  (assoc-in db [:active-list-idx] idx) ))
+
+;; --- Channel related
 
 (register-handler 
  :delete
@@ -110,11 +97,6 @@
    (data/delete! (:active-list-idx db) item)
    db))
 
-(register-handler
- :set-ipm
- cfg-mw
- (fn [db [_ ipm]]
-   (assoc-in db [:items-per-sec] (/ ipm 60))))
 
 (register-handler
  :textarea-import
@@ -122,3 +104,26 @@
  (fn [db [_]]
    (importer/textarea-import! data/words)
    db))
+
+(register-handler 
+ :channel-set-mix
+ cfg-mw
+ (fn 
+   [db [_ data value]] 
+   (data/set-mix! 
+    (@data (:active-list-idx db)) 
+    value)
+   db))
+
+;; todo decouple this
+(register-handler 
+ :clear 
+ (fn [db _] 
+   (data/clear (@data/wordlists (:active-list-idx db)))
+   (screen/clear)
+   db))
+
+(register-handler
+ :mute
+ (fn [db [_ channel]]
+   (data/toggle-muted channel)))

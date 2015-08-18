@@ -1,7 +1,6 @@
 (ns app.ctl
   (:require [cljs.core.async :refer [put! chan <! mult tap]]
             [dragonmark.web.core :as dw :refer [xf xform]]
-            [app.datasource :as data]
             [cljs.reader]
             [cljsjs.mousetrap]
             [reagent.core :as reagent :refer [atom]]            
@@ -24,7 +23,10 @@
     "display: none;"))
 
 (defn data-item [items]
-  (for [item items] [:div  [:span item] [:button {:on-click #(dispatch-sync [:delete item])} "D"]]))
+  (for [item items] 
+    [:div  
+     [:span item] 
+     [:button {:on-click #(dispatch-sync [:delete item])} "D"]]))
 
 (defn data-tab-item [data active-idx]
   (for [i (range (count data))] 
@@ -32,7 +34,7 @@
      [:a {:data-idx i} (:title (data i))]
      [:span {:class (str "glyphicon " (if (:muted? (data i)) "glyphicon-volume-off" "glyphicon-volume-up")) 
              :aria-hidden "true"
-             :on-click #(data/toggle-muted (data i))} ]]))
+             :on-click #(dispatch-sync [:mute (data i)])} ]]))
 
 (defn control-panel [playstates                     
                      data]
