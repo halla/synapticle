@@ -3,7 +3,9 @@
             [re-frame.core :refer [subscribe dispatch-sync]]
             [app.ctl :as ctl]
             [clojure.string :as str]
-            [cljs.core.async :refer [put!]]))
+            [cljs.core.async :refer [put!]])
+  (:require-macros [reagent.ratom :refer [reaction]]
+))
 
 
 (defn tokenize-content [] 
@@ -26,21 +28,23 @@
     (vec (distinct (sequence process-pipeline in)))))
 
 
-(defn keydownhandler [nextword active-list-idx]
+(defn keydownhandler [nextword active-channel]
   (fn [e]
     (when (= (.-which e) 27) ;esc
       (reset! nextword ""))
     (when (= (.-key e) "Enter")
-      (dispatch-sync [:words-add (process-input @nextword)])
+      (dispatch-sync [:words-add (process-input @nextword) @active-channel])
       (reset! nextword ""))))
 
-(defn textfield-component [wordstore]
+(defn textfield-component []
   (let [active-list-idx (subscribe [:active-list-idx])
+        channels (subscribe [:channels])
+        active-channel (reaction (@channels @active-list-idx))
         nextword (atom "")]
     (fn []
       [:input {:type "text" 
                :value @nextword
-               :placeholder (str "Add item to " (:title (@wordstore @active-list-idx)))
+               :placeholder (str "Add item to " (:title @active-channel))
                :class "form-control"
                :on-change #(reset! nextword (-> % .-target .-value))
-               :on-key-down (keydownhandler nextword active-list-idx)}])))
+               :on-key-down (keydownhandler nextword active-channel)}])))

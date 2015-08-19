@@ -5,5 +5,6 @@
 
 
 (defn render-player []
-  (let [playmode (subscribe [:playmode])]   
-    #(player/render (handlers/get-player @playmode))))
+  (let [playmode (subscribe [:playmode])
+        channels (subscribe [:channels])]   
+    #(player/render (handlers/get-player @playmode @channels))))

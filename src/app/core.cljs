@@ -24,11 +24,11 @@
 (defn mount-root []
   (reagent/render [ctl/control-panel
                    handlers/playstates                  
-                   data/wordlists
                    ] (.getElementById js/document "controls"))
-  (reagent/render [importer/textfield-component data/wordlists]
+  (reagent/render [importer/textfield-component]
                   (.getElementById js/document "wordinputs"))
-  (reagent/render [views/render-player] (.getElementById js/document "screen")))
+  (reagent/render [views/render-player] (.getElementById js/document "screen"))
+  )
 
 
 (mount-root)

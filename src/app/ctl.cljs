@@ -3,10 +3,12 @@
             [dragonmark.web.core :as dw :refer [xf xform]]
             [cljs.reader]
             [cljsjs.mousetrap]
-            [reagent.core :as reagent :refer [atom]]            
+            [reagent.core :as reagent :refer [atom]]     
             [re-frame.core :refer [dispatch-sync
-                                   subscribe]])
+                                   subscribe
+                                   ]])
   (:require-macros [app.templates :refer [deftmpl]]
+                   [reagent.ratom :refer [reaction]]
                    [cljs.core.async.macros :refer [go]])
   (:use [domina.css :only [sel]]
         [domina.events :only [listen! target]]))
@@ -36,32 +38,34 @@
              :aria-hidden "true"
              :on-click #(dispatch-sync [:mute (data i)])} ]]))
 
-(defn control-panel [playstates                     
-                     data]
+(defn control-panel [playstates]
   (let [active-list-idx (subscribe [:active-list-idx])
         items-per-sec (subscribe [:items-per-sec])
         playmode (subscribe [:playmode])
         playstate (subscribe [:playstate])
         randomize? (subscribe [:randomize])
         dataview-visible? (subscribe [:dataview-visible?])
-        import-visible? (subscribe [:import-visible?])]
+        import-visible? (subscribe [:import-visible?])
+        channels (subscribe [:channels])
+        active-channel (reaction (@channels @active-list-idx))] 
+    
     (fn []
       (xform ctl-tpl 
              ["#import-dlg" {:style (display? import-visible?)}]
              ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" {:style (display? dataview-visible?)}]
-             ["#channel-controls .channel-mix"  {:value (:gain (@data @active-list-idx))
+             ["#channel-controls .channel-mix"  {:value (:gain (@channels @active-list-idx))
                                                  :on-change #(dispatch-sync 
-                                                              [:channel-set-mix data (cljs.reader/read-string (.. % -target -value))])}]
-             ["#dataview .datalist li" :* (data-item (:items (@data @active-list-idx))) ]
-             ["#dataview .nav-tabs li" :* (data-tab-item @data @active-list-idx) ]
+                                                              [:channel-set-mix (@channels @active-list-idx) (cljs.reader/read-string (.. % -target -value))])}]
+             ["#dataview .datalist li" :* (data-item (:items (@channels @active-list-idx))) ]
+             ["#dataview .nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
              ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
                                                         idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
                                                     (dispatch-sync [:set-active-channel idx]) )}]
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
              ["#play-state" (playstates @playstate)]           
-             ["#clear-screen" {:on-click #(dispatch-sync [:clear])}]
+             ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
              ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
              ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]

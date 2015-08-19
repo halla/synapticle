@@ -1,5 +1,5 @@
 (ns app.handlers
-  (:require [re-frame.core :refer [register-handler dispatch-sync after]]
+  (:require [re-frame.core :refer [register-handler dispatch-sync after path]]
             [cljs.core.async :refer [put!]]
             [app.db :as db]
             [app.screen :as screen]
@@ -15,16 +15,17 @@
 (def ->ls (after db/cfg->ls!))
 
 (def cfg-mw [->ls])
+(def channel-mw [(path :channels)])
 
 (def playstates {:stopped "Stopped"
                  :running "Running"})
 
-(def playmodes {"drizzle" (drizzle/drizzle data/wordlists screen/divs)
-                "pairs" (pairs/pairs data/wordlists screen/divs)
-                "single" (players/single data/wordlists screen/divs)})
+(def playmodes {"drizzle" drizzle/drizzle
+                "pairs" pairs/pairs
+                "single" players/single})
 
-(defn get-player [mode]
-  (playmodes mode))
+(defn get-player [mode channels]
+  ((playmodes mode) channels screen/divs))
 
 ;: -- re-frame style handlers
 
@@ -47,8 +48,8 @@
         step-func (if (:randomize? db) player/step-rnd player/step-fwd)]
     (js/clearInterval (:print-timer db))
     (js/clearInterval (:animation-timer db))
-    (merge db {:print-timer (js/setInterval #(step-func (get-player (:playmode db))) interval-new)
-               :animation-timer (js/setInterval #(player/animation (get-player (:playmode db))) interval-anim)
+    (merge db {:print-timer (js/setInterval #(step-func (get-player (:playmode db) (:channels db))) interval-new)
+               :animation-timer (js/setInterval #(player/animation (get-player (:playmode db) (:channels db))) interval-anim)
                :playstate :running})))
 
 (register-handler :start start)
@@ -108,29 +109,37 @@
 
 (register-handler 
  :channel-set-mix
- cfg-mw
+ [cfg-mw
+  channel-mw]
  (fn 
-   [db [_ data value]] 
-   (data/set-mix! 
-    (@data (:active-list-idx db)) 
-    value)
-   db))
+   [channels [_ channel value]] 
+   (vec (map #(if (= % channel)
+                (assoc % :gain value) 
+                %) channels))))
 
 ;; todo decouple this
 (register-handler 
  :clear 
- (fn [db _] 
-   (data/clear (@data/wordlists (:active-list-idx db)))
+ channel-mw
+ (fn [channels [_ channel]]
    (screen/clear)
-   db))
+   (vec (map #(if (= % channel)
+                (assoc % :items [])
+                %) channels))))
 
 (register-handler
  :mute
- (fn [db [_ channel]]
-   (data/toggle-muted channel)))
+ channel-mw
+ (fn [channels [_ channel]]
+   (vec (map #(if (= % channel)
+                (assoc % :muted? (not (:muted? %))) 
+                %) channels))))
 
 (register-handler
  :words-add
- (fn [db [_ words]]
-   (data/add-multiple! (@data/wordlists (:active-list-idx db)) words)
-   db))
+ channel-mw
+ (fn [channels [_ words channel]]
+   channels
+   (vec (map #(if (= % channel)
+                (assoc % :items (vec (concat (:items %) words))) 
+                %) channels))))
