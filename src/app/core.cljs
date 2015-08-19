@@ -27,8 +27,7 @@
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component]
                   (.getElementById js/document "wordinputs"))
-  (reagent/render [views/render-player] (.getElementById js/document "screen"))
-  )
+  (reagent/render [views/render-player] (.getElementById js/document "screen")))
 
 
 (mount-root)

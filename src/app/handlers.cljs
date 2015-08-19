@@ -91,21 +91,17 @@
 
 ;; --- Channel related
 
+(defn delete [vect item]
+  (vec (remove (fn [word] (= word item)) vect)))
+
 (register-handler 
  :delete
- cfg-mw
- (fn [db [_ item]] 
-   (data/delete! (:active-list-idx db) item)
-   db))
+ channel-mw
+ (fn [channels [_ item channel]] 
+   (mapv #(if (= % channel)
+            (assoc % :items (delete (:items %) item)) 
+            %) channels)))
 
-
-(register-handler
- :textarea-import
- cfg-mw
- (fn [db [_ words]]
-   (data/add-multiple! (@data/wordlists (:active-list-idx db)) 
-                       (importer/process-input words))
-   db))
 
 (register-handler 
  :channel-set-mix
@@ -133,6 +129,15 @@
  (fn [channels [_ channel]]
    (vec (map #(if (= % channel)
                 (assoc % :muted? (not (:muted? %))) 
+                %) channels))))
+
+
+(register-handler
+ :import
+ channel-mw
+ (fn [channels [_ text channel]]
+   (vec (map #(if (= % channel)
+                (assoc % :items (vec (concat (:items %) (importer/process-input text)))) 
                 %) channels))))
 
 (register-handler

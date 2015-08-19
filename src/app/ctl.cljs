@@ -13,7 +13,6 @@
   (:use [domina.css :only [sel]]
         [domina.events :only [listen! target]]))
 
-
 (defn reload-hook []
   (println "RELOAD CTL"))
 
@@ -24,11 +23,11 @@
     "display: block;"
     "display: none;"))
 
-(defn data-item [items]
+(defn data-item [items channel]
   (for [item items] 
     [:div  
      [:span item] 
-     [:button {:on-click #(dispatch-sync [:delete item])} "D"]]))
+     [:button {:on-click #(dispatch-sync [:delete item channel])} "D"]]))
 
 (defn data-tab-item [data active-idx]
   (for [i (range (count data))] 
@@ -58,7 +57,7 @@
              ["#channel-controls .channel-mix"  {:value (:gain (@channels @active-list-idx))
                                                  :on-change #(dispatch-sync 
                                                               [:channel-set-mix (@channels @active-list-idx) (cljs.reader/read-string (.. % -target -value))])}]
-             ["#dataview .datalist li" :* (data-item (:items (@channels @active-list-idx))) ]
+             ["#dataview .datalist li" :* (data-item (:items @active-channel) @active-channel) ]
              ["#dataview .nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
              ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
                                                         idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
@@ -72,8 +71,9 @@
              ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
              ["#textareaimport-button" {:on-click 
                                         (fn [] 
-                                          (dispatch-sync [:textarea-import
-                                                          (.-value (.getElementById js/document "textareaimport"))])
+                                          (dispatch-sync [:import
+                                                          (.-value (.getElementById js/document "textareaimport"))
+                                                          @active-channel])
                                           (aset (.getElementById js/document "textareaimport") "value" "")
                                           
                                                         )}]           
