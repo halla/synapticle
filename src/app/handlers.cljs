@@ -1,5 +1,7 @@
 (ns app.handlers
-  (:require [re-frame.core :refer [register-handler dispatch-sync after path]]
+  (:require [re-frame.core :refer [register-handler 
+                                   dispatch-sync after path
+                                   trim-v]]
             [cljs.core.async :refer [put!]]
             [app.db :as db]
             [app.screen :as screen]
@@ -14,7 +16,9 @@
 
 (def ->ls (after db/cfg->ls!))
 
-(def cfg-mw [->ls])
+(def cfg-mw [->ls
+             trim-v])
+
 (def channel-mw [(path :channels)])
 
 (def playstates {:stopped "Stopped"
@@ -73,21 +77,24 @@
  (fn [db [_ randomize?]]
    (assoc-in db [:randomize?] randomize?)))
 
+;; ----- Config / control related
+
 (register-handler
  :set-playmode
  cfg-mw
- (fn [db [_ playmode]]
+ (fn [db [playmode]]
    (assoc-in db [:playmode] playmode)))
 
 (register-handler
  :set-ipm
  cfg-mw
- (fn [db [_ ipm]]
+ (fn [db [ipm]]
    (assoc-in db [:items-per-sec] (/ ipm 60))))
 
 (register-handler 
  :set-active-channel 
- (fn [db [_ idx]]  (assoc-in db [:active-list-idx] idx) ))
+ cfg-mw
+ (fn [db [idx]]  (assoc-in db [:active-list-idx] idx) ))
 
 ;; --- Channel related
 
@@ -144,7 +151,7 @@
  :words-add
  channel-mw
  (fn [channels [_ words channel]]
-   channels
+   channels   
    (vec (map #(if (= % channel)
                 (assoc % :items (vec (concat (:items %) words))) 
                 %) channels))))
