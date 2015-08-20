@@ -4,16 +4,17 @@
 
 (def default-value 
 
-  {
-   :playstate :running
-   :playmode "drizzle"
-   :randomize? true
-   :print-timer 0
-   :animation-timer 0
-   :dataview-visible? true
-   :import-visible? false
-   :active-list-idx 0
-   :items-per-sec 2.0
+  {:controls {:dataview-visible? true
+              :import-visible? false
+              :active-list-idx 0}
+
+   :player {:playstate :running
+            :playmode "drizzle"
+            :randomize? true
+            :print-timer 0
+            :animation-timer 0
+            :items-per-sec 2.0 }
+
    :channels [{:title "List 1"
           :items ["Collide ideas"
                   "Review your notes" 
@@ -53,13 +54,13 @@
 
 
 
-(def lsk "synapticle")
+(def lsk "db")
 
-(defn ls->cfg 
+(defn ls->db
   []
   (some->> (.getItem js/localStorage lsk)
            (cljs.reader/read-string)))
 
-(defn cfg->ls!
-  [cfg]
-  (.setItem js/localStorage lsk (str cfg)))
+(defn db->ls!
+  [db]
+  (.setItem js/localStorage lsk (str db)))

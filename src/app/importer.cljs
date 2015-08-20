@@ -34,6 +34,7 @@
       (reset! nextword ""))
     (when (= (.-key e) "Enter")
       (dispatch-sync [:words-add (process-input @nextword) @active-channel])
+      (dispatch-sync [:start])
       (reset! nextword ""))))
 
 (defn textfield-component []

@@ -1,7 +1,7 @@
 (ns app.handlers
   (:require [re-frame.core :refer [register-handler 
                                    dispatch-sync after path
-                                   trim-v]]
+                                   trim-v debug]]
             [cljs.core.async :refer [put!]]
             [app.db :as db]
             [app.screen :as screen]
@@ -10,16 +10,19 @@
             [app.datasource :as data]
             [app.drizzle :as drizzle]
             [app.pairs :as pairs]
-            [app.players :as players]            
+            [app.players :as players]  
             [app.ctl :as ctl]))
 
 
-(def ->ls (after db/cfg->ls!))
+(def ->ls (after db/db->ls!))
 
-(def cfg-mw [->ls
-             trim-v])
+(def player-mw [trim-v])
+(def controls-mw [(path :controls)
+                  trim-v])
 
-(def channel-mw [(path :channels)])
+(def channel-mw [->ls
+                 (path :channels)                 
+                 trim-v])
 
 (def playstates {:stopped "Stopped"
                  :running "Running"})
@@ -28,45 +31,53 @@
                 "pairs" pairs/pairs
                 "single" players/single})
 
-(defn get-player [mode channels]
+(defn get-player [mode channels] ; runs on every animation frame?  
   ((playmodes mode) channels screen/divs))
 
 ;: -- re-frame style handlers
 
 (register-handler 
  :initialize-db 
- (fn [_ _] (merge db/default-value (db/ls->cfg))))
+ [debug]
+ (fn [_ _] (merge db/default-value (db/ls->db))))
 
-(register-handler 
- :toggle-dataview-visibility 
- (fn [db _] (update-in db [:dataview-visible?] #(not %))))
 
-(register-handler 
- :toggle-import-visibility 
- (fn [db _] (update-in db [:import-visible?] #(not %))))
-
+;; -- Player
 
 (defn start [db [_]]
-  (let [interval-new (/ 1000 (:items-per-sec db))
+  (let [player (:player db)
+        interval-new (/ 1000 (:items-per-sec player))
         interval-anim 50
-        step-func (if (:randomize? db) player/step-rnd player/step-fwd)]
-    (js/clearInterval (:print-timer db))
-    (js/clearInterval (:animation-timer db))
-    (merge db {:print-timer (js/setInterval #(step-func (get-player (:playmode db) (:channels db))) interval-new)
-               :animation-timer (js/setInterval #(player/animation (get-player (:playmode db) (:channels db))) interval-anim)
-               :playstate :running})))
+        step-func (if (:randomize? player) player/step-rnd player/step-fwd)]
+    (js/clearInterval (:print-timer player))
+    (js/clearInterval (:animation-timer player))
+    (merge-with merge db {:player {:print-timer (js/setInterval 
+                                                  #(step-func (get-player (:playmode player) (:channels db))) interval-new)
+                                    :animation-timer (js/setInterval 
+                                                      #(player/animation 
+                                                        (get-player (:playmode player) (:channels db))) interval-anim)
+                                    :playstate :running}})))
 
-(register-handler :start start)
+
+
+(register-handler 
+ :start 
+ [player-mw]
+ start)
 
 (defn stop [db [_]]
-  (js/clearInterval (:print-timer db))
-  (js/clearInterval (:animation-timer db))
-  (assoc-in db [:playstate] :stopped))
+  (js/clearInterval (get-in  db [:player :print-timer]))
+  (js/clearInterval (get-in db [:player :animation-timer]))
+  (assoc-in db [:player :playstate] :stopped))
 
-(register-handler :stop stop)
+(register-handler 
+ :stop 
+ player-mw
+ stop)
 
 (register-handler 
  :toggle-play 
+ player-mw
  (fn [db [_]] 
    (if (= (:playstate db) :stopped)
      (start db [])
@@ -74,27 +85,41 @@
 
 (register-handler
  :set-randomize
- (fn [db [_ randomize?]]
+ player-mw
+ (fn [db [randomize?]]
    (assoc-in db [:randomize?] randomize?)))
 
-;; ----- Config / control related
 
 (register-handler
  :set-playmode
- cfg-mw
+ player-mw
  (fn [db [playmode]]
    (assoc-in db [:playmode] playmode)))
 
 (register-handler
  :set-ipm
- cfg-mw
+ player-mw
  (fn [db [ipm]]
    (assoc-in db [:items-per-sec] (/ ipm 60))))
 
+
+;; ----- Controls 
+
+(register-handler 
+ :toggle-dataview-visibility 
+ controls-mw
+ (fn [db _] (update-in db [:dataview-visible?] #(not %))))
+
+(register-handler 
+ :toggle-import-visibility 
+ controls-mw
+ (fn [db _] (update-in db [:import-visible?] #(not %))))
+
 (register-handler 
  :set-active-channel 
- cfg-mw
+ controls-mw
  (fn [db [idx]]  (assoc-in db [:active-list-idx] idx) ))
+
 
 ;; --- Channel related
 
@@ -104,7 +129,7 @@
 (register-handler 
  :delete
  channel-mw
- (fn [channels [_ item channel]] 
+ (fn [channels [item channel]] 
    (mapv #(if (= % channel)
             (assoc % :items (delete (:items %) item)) 
             %) channels)))
@@ -112,10 +137,9 @@
 
 (register-handler 
  :channel-set-mix
- [cfg-mw
-  channel-mw]
+ channel-mw
  (fn 
-   [channels [_ channel value]] 
+   [channels [channel value]] 
    (vec (map #(if (= % channel)
                 (assoc % :gain value) 
                 %) channels))))
@@ -124,7 +148,7 @@
 (register-handler 
  :clear 
  channel-mw
- (fn [channels [_ channel]]
+ (fn [channels [channel]]
    (screen/clear)
    (vec (map #(if (= % channel)
                 (assoc % :items [])
@@ -133,7 +157,7 @@
 (register-handler
  :mute
  channel-mw
- (fn [channels [_ channel]]
+ (fn [channels [channel]]
    (vec (map #(if (= % channel)
                 (assoc % :muted? (not (:muted? %))) 
                 %) channels))))
@@ -142,7 +166,7 @@
 (register-handler
  :import
  channel-mw
- (fn [channels [_ text channel]]
+ (fn [channels [text channel]]
    (vec (map #(if (= % channel)
                 (assoc % :items (vec (concat (:items %) (importer/process-input text)))) 
                 %) channels))))
@@ -150,7 +174,7 @@
 (register-handler
  :words-add
  channel-mw
- (fn [channels [_ words channel]]
+ (fn [channels [words channel]]
    channels   
    (vec (map #(if (= % channel)
                 (assoc % :items (vec (concat (:items %) words))) 
