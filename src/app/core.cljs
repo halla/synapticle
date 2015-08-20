@@ -14,7 +14,7 @@
 
 (defn main []
   "Called on code reload"
-  (reagent.core/flush)
+  (dispatch-sync [:start])
   (println "RELOAD"))
 
 

@@ -75,6 +75,7 @@
                                                           (.-value (.getElementById js/document "textareaimport"))
                                                           @active-channel])
                                           (aset (.getElementById js/document "textareaimport") "value" "")
+                                          (dispatch-sync [:start])
                                           
                                                         )}]           
              ["#playmode .drizzle" {:on-change (fn [] 
