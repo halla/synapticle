@@ -16,12 +16,13 @@
 
 (def ->ls (after db/db->ls!))
 
-(def player-mw [trim-v])
+(def player-mw [(path :player)
+                trim-v])
 (def controls-mw [(path :controls)
                   trim-v])
 
 (def channel-mw [->ls
-                 (path :channels)                 
+                 (path :channels)
                  trim-v])
 
 (def playstates {:stopped "Stopped"
@@ -44,7 +45,7 @@
 
 ;; -- Player
 
-(defn start [db [_]]
+(defn start [db [_]] ;; TODO remove channel dep
   (let [player (:player db)
         interval-new (/ 1000 (:items-per-sec player))
         interval-anim 50
@@ -62,7 +63,7 @@
 
 (register-handler 
  :start 
- [player-mw]
+ [trim-v]
  start)
 
 (defn stop [db [_]]
@@ -72,14 +73,14 @@
 
 (register-handler 
  :stop 
- player-mw
+ [trim-v]
  stop)
 
 (register-handler 
  :toggle-play 
- player-mw
+ [trim-v]
  (fn [db [_]] 
-   (if (= (:playstate db) :stopped)
+   (if (= (get-in db [:player :playstate]) :stopped)
      (start db [])
      (stop db []))))
 
@@ -92,7 +93,7 @@
 
 (register-handler
  :set-playmode
- player-mw
+ [player-mw]
  (fn [db [playmode]]
    (assoc-in db [:playmode] playmode)))
 
