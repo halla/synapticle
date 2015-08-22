@@ -1,6 +1,21 @@
 (ns app.db
-  (:require [reagent.core]))
+  (:require [reagent.core]
+            [schema.core :as s :include-macros true]))
 
+(def schema {
+             :controls {:dataview-visible? s/Bool
+                        :import-visible? s/Bool
+                        :active-list-idx s/Int}
+             :player {:playstate (s/enum :running :stopped)
+                      :playmode s/Str
+                      :randomize? s/Bool
+                      :print-timer s/Int
+                      :animation-timer s/Int
+                      :items-per-sec s/Num}
+             :channel [{:items [s/Str]
+                        :gain s/Num
+                        :muted? s/Bool}]
+             })
 
 (def default-value 
 

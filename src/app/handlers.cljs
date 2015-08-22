@@ -3,6 +3,7 @@
                                    dispatch-sync after path
                                    trim-v debug]]
             [cljs.core.async :refer [put!]]
+            [schema.core :as s :include-macros true]
             [app.db :as db]
             [app.screen :as screen]
             [app.player :as player]
@@ -14,14 +15,29 @@
             [app.ctl :as ctl]))
 
 
+(defn check-and-throw
+  "throw an exception if db doesn't match the schema."
+  [a-schema db]
+  (if-let [problems  (s/check a-schema db)]
+    (throw (js/Error. (str "schema check failed: " problems)))))
+
+;; after an event handler has run, this middleware can check that
+;; it the value in app-db still correctly matches the schema.
+(def check-schema-mw (after (partial check-and-throw db/schema)))
+
+
 (def ->ls (after db/db->ls!))
 
-(def player-mw [(path :player)
+(def player-mw [check-schema-mw
+                (path :player)
                 trim-v])
-(def controls-mw [(path :controls)
+
+(def controls-mw [check-schema-mw
+                  (path :controls)
                   trim-v])
 
-(def channel-mw [->ls
+(def channel-mw [check-schema-mw
+                 ->ls
                  (path :channels)
                  trim-v])
 

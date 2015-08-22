@@ -5,6 +5,7 @@
                  [adzerk/boot-cljs-repl "0.1.10-SNAPSHOT" :scope "test"]
                  [adzerk/boot-reload    "0.3.1"      :scope "test"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [prismatic/schema "0.4.4"]
                  [reagent "0.5.0"]
                  [re-frame "0.4.1"]
                  [cljs-tooling "0.1.7"]
