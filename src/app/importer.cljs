@@ -38,7 +38,8 @@
       (reset! nextword ""))))
 
 (defn textfield-component []
-  (let [active-list-idx (subscribe [:active-list-idx])
+  (let [controls (subscribe [:controls]) 
+        active-list-idx (reaction (:active-list-idx @controls))
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))
         nextword (atom "")]

@@ -38,20 +38,18 @@
              :on-click #(dispatch-sync [:mute (data i)])} ]]))
 
 (defn control-panel [playstates]
-  (let [active-list-idx (subscribe [:active-list-idx])
-        items-per-sec (subscribe [:items-per-sec])
-        playmode (subscribe [:playmode])
-        playstate (subscribe [:playstate])
-        randomize? (subscribe [:randomize])
-        dataview-visible? (subscribe [:dataview-visible?])
-        import-visible? (subscribe [:import-visible?])
+  (let [player (subscribe [:player])
+        controls (subscribe [:controls])
+        active-list-idx (reaction (:active-list-idx @controls))
+        dataview-visible? (reaction (:dataview-visible? @controls))
+        import-visible? (reaction (:import-visible? @controls))
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))] 
     
     (fn []
       (xform ctl-tpl 
-             ["#import-dlg" {:style (display? import-visible?)}]
-             ["#control-panel" {:class (clojure.string/lower-case (playstates @playstate))}]
+             ["#import-dlg" {:style (display?  import-visible?)}]
+             ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" {:style (display? dataview-visible?)}]
              ["#channel-controls .channel-mix"  {:value (:gain (@channels @active-list-idx))
@@ -63,12 +61,12 @@
                                                         idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
                                                     (dispatch-sync [:set-active-channel idx]) )}]
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
-             ["#play-state" (playstates @playstate)]           
+             ["#play-state" (playstates (:playstate player))]           
              ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
              ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
-             ["#playmode input.drizzle" (if (= @playmode "drizzle") {:checked "true"} {})]
-             ["#playmode input.pairs" (if (= @playmode "pairs") {:checked "true"} {})]
-             ["#playmode input.single" (if (= @playmode "single") {:checked "true"} {})]
+             ["#playmode input.drizzle" (if (= (:playmode @player) "drizzle") {:checked "true"} {})]
+             ["#playmode input.pairs" (if (= (:playmode @player) "pairs") {:checked "true"} {})]
+             ["#playmode input.single" (if (= (:playmode @player) "single") {:checked "true"} {})]
              ["#textareaimport-button" {:on-click 
                                         (fn [] 
                                           (dispatch-sync [:import
@@ -87,12 +85,12 @@
              ["#playmode .single" {:on-change (fn [] 
                                                 (dispatch-sync [:set-playmode "single"])
                                                 (dispatch-sync [:start]))}]
-             ["#ipm" {:value (Math/floor (* 60  @items-per-sec))
+             ["#ipm" {:value (Math/floor (* 60  (:items-per-sec @player)))
                       :on-change (fn [evt] 
                                    (dispatch-sync [:set-ipm
                                                    (cljs.reader/read-string (.. evt -target -value ))])
                                    (dispatch-sync [:start]))}]
-             ["#doRandomize" (if @randomize? {:checked "true"} {})]
+             ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              ))))
