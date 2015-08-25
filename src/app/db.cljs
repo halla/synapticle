@@ -14,56 +14,80 @@
              :channels [{:title s/Str
                          :items [s/Str]
                          :gain s/Num
-                         :muted? s/Bool}]})
+                         :muted? s/Bool}]
+             :screen [{:x s/Int
+                       :y s/Int
+                       :size s/Int
+                       :color s/Str
+                       :text s/Str
+                       :opacity s/Num
+                       :key s/Str
+                       }]})
+
+(def defaults-player
+  {:playstate :running
+   :playmode "drizzle"
+   :randomize? true
+   :print-timer 0
+   :animation-timer 0
+   :items-per-sec 2.0 })
+
+(def defaults-controls 
+  {:dataview-visible? true
+   :import-visible? false
+   :active-list-idx 0})
+
+(def defaults-screen 
+  [{:text "hep!"
+    :size 20
+    :color "green"
+    :key "1234567" 
+    :opacity 1.0
+    :x 100
+    :y 100}])
+
+(def defaults-channels 
+  [{:title "List 1"
+    :items ["Collide ideas"
+            "Review your notes" 
+            "Generate random associations" 
+            "Preview text materials" 
+            "Computer assisted thinking" 
+            "Immerse yourself on a subject"
+            "Just relax and watch the screen"
+            "Let your thoughts wander"                  
+            "If you get an idea, add it to the wordlist"
+            "You can pause the screen to hold a thought"]
+    :gain 0.7
+    :muted? false}
+   {:title "List 2"
+    :items ["hep"]
+    :gain 0.7
+    :muted? false}
+   {:title "List 3"
+    :items []
+    :gain 0.7
+    :muted? false}
+   {:title "List 4"
+    :items []
+    :gain 0.7
+    :muted? false}
+   {:title "Expand"
+    :items ["imagine" 
+            "possible"
+            "future"]
+    :gain 0.3
+    :muted? false}
+   {:title "Questions"
+    :items ["What if?" "What else?"]
+    :gain 0.2
+    :muted? false}])
 
 (def default-value 
-
-  {:controls {:dataview-visible? true
-              :import-visible? false
-              :active-list-idx 0}
-
-   :player {:playstate :running
-            :playmode "drizzle"
-            :randomize? true
-            :print-timer 0
-            :animation-timer 0
-            :items-per-sec 2.0 }
-
-   :channels [{:title "List 1"
-          :items ["Collide ideas"
-                  "Review your notes" 
-                  "Generate random associations" 
-                  "Preview text materials" 
-                  "Computer assisted thinking" 
-                  "Immerse yourself on a subject"
-                  "Just relax and watch the screen"
-                  "Let your thoughts wander"                  
-                  "If you get an idea, add it to the wordlist"
-                  "You can pause the screen to hold a thought"]
-          :gain 0.7
-          :muted? false}
-         {:title "List 2"
-          :items ["hep"]
-          :gain 0.7
-          :muted? false}
-         {:title "List 3"
-          :items []
-          :gain 0.7
-          :muted? false}
-         {:title "List 4"
-          :items []
-          :gain 0.7
-          :muted? false}
-         {:title "Expand"
-          :items ["imagine" 
-                  "possible"
-                  "future"]
-          :gain 0.3
-          :muted? false}
-         {:title "Questions"
-          :items ["What if?" "What else?"]
-          :gain 0.2
-          :muted? false}]})
+  {:controls defaults-controls
+   :player defaults-player
+   :channels defaults-channels
+   :screen defaults-screen } )
 
 
 

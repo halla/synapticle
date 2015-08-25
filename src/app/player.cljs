@@ -2,8 +2,8 @@
 
 
 (defprotocol Player
-  (step-fwd [this])
-  (step-rnd [this])
-  (animation [this])
-  (render [this]))
+  (step-fwd [this screen channels])
+  (step-rnd [this screen channels])
+  (animation [this screen])
+  (render [this screen]))
 

@@ -7,6 +7,7 @@
 (def pair (atom ["black" "white"]))
 (def index (atom 0))
 
+
 (defn get-combination [sources]
   (if false ;; TODO check empty sources
     ["Add" "items"]
@@ -20,10 +21,10 @@
 (defn pairs [data presentation]
   (reify
     player/Player
-    (step-fwd [_] (reset! pair (get-combination data))) 
-    (step-rnd [_] (reset! pair (get-combination data)))
-    (animation [_])
-    (render [_]   
+    (step-fwd [_ screen channels] (reset! pair (get-combination channels))) 
+    (step-rnd [_ screen channels] (reset! pair (get-combination channels)))
+    (animation [_ screen])
+    (render [_ screen]
       [:div {:class "pairs"}
        [:div {:class "first panel"} (@pair 0)]
        [:div {:class "second panel"} (@pair 1)]

@@ -43,16 +43,15 @@
    :color (colors (rand-int (count colors)))})
 
 
-(defn gen-noncollide-attrs []
+(defn gen-noncollide-attrs [screen]
   (loop [trials 100] 
     (let [div2 (gen-div-attrs)]      
-      (if (and (divs-collision? div2 @divs)
+      (if (and (divs-collision? div2 screen)
                (> trials 0))
         (recur (dec trials))
         div2))))
 
 
-(defn gen-item [word]
-  (let [attrs (gen-noncollide-attrs)]
+(defn gen-item [word screen]
+  (let [attrs (gen-noncollide-attrs screen)]
     (assoc attrs :text word :opacity 1.0 :key (str (rand-int 100000000))))) ; todo generate uuid for key
-

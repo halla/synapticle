@@ -10,3 +10,4 @@
 
 (register-sub :channels (fn [db _] (reaction (:channels @db))))
 
+(register-sub :screen (fn [db _] (reaction (:screen @db))))

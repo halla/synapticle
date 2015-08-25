@@ -6,6 +6,7 @@
             [schema.core :as s :include-macros true]
             [app.db :as db]
             [app.screen :as screen]
+            [app.multiplexer :as mux]
             [app.player :as player]
             [app.importer :as importer]
             [app.datasource :as data]
@@ -33,6 +34,7 @@
                 trim-v])
 
 (def controls-mw [check-schema-mw
+                  ->ls
                   (path :controls)
                   trim-v])
 
@@ -40,6 +42,9 @@
                  ->ls
                  (path :channels)
                  trim-v])
+
+(def screen-mw [check-schema-mw
+                trim-v])
 
 (def playstates {:stopped "Stopped"
                  :running "Running"})
@@ -68,12 +73,14 @@
         step-func (if (:randomize? player) player/step-rnd player/step-fwd)]
     (js/clearInterval (:print-timer player))
     (js/clearInterval (:animation-timer player))
-    (merge-with merge db {:player {:print-timer (js/setInterval 
-                                                  #(step-func (get-player (:playmode player) (:channels db))) interval-new)
-                                    :animation-timer (js/setInterval 
-                                                      #(player/animation 
-                                                        (get-player (:playmode player) (:channels db))) interval-anim)
-                                    :playstate :running}})))
+    (merge-with merge db 
+                {:player {:print-timer (js/setInterval 
+                                        #(dispatch-sync [:step])
+                                        interval-new)
+                          :animation-timer (js/setInterval 
+                                            #(dispatch-sync [:animate])
+                                            interval-anim)
+                          :playstate :running}})))
 
 
 
@@ -125,7 +132,7 @@
 (register-handler 
  :toggle-dataview-visibility 
  controls-mw
- (fn [db _] (update-in db [:dataview-visible?] #(not %))))
+ (fn [controls _] (update-in controls [:dataview-visible?] #(not %))))
 
 (register-handler 
  :toggle-import-visibility 
@@ -196,3 +203,26 @@
    (vec (map #(if (= % channel)
                 (assoc % :items (vec (concat (:items %) words))) 
                 %) channels))))
+
+
+; -- screen
+
+(register-handler
+ :step
+ [screen-mw]
+ (fn [db]
+   (let [step-func (if (:randomize? (:player db)) player/step-rnd player/step-fwd)]
+     (assoc-in db [:screen] 
+               (step-func (get-player (:playmode (:player db)) (:channels db))
+                          (:screen db)
+                          (:channels db))))))
+
+
+(register-handler
+ :animate
+ screen-mw
+ (fn [db]
+   (assoc-in db [:screen]
+             (player/animation
+              (get-player (:playmode (:player db)) (:channels db))
+              (:screen db)))))
