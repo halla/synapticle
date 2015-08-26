@@ -15,12 +15,12 @@
                          :items [s/Str]
                          :gain s/Num
                          :muted? s/Bool}]
-             :screen [{:x s/Int
-                       :y s/Int
-                       :size s/Int
-                       :color s/Str
+             :screen [{(s/optional-key :x) s/Int
+                       (s/optional-key :y) s/Int
+                       (s/optional-key :size) s/Int
+                       (s/optional-key :color) s/Str
                        :text s/Str
-                       :opacity s/Num
+                       (s/optional-key :opacity) s/Num
                        :key s/Str
                        }]})
 
