@@ -22,3 +22,12 @@
         rnd-item (items (rand-int (count items)))]
     rnd-item))
 
+(defn get-combination [sources]
+  (if false ;; TODO check empty sources
+    ["Add" "items"]
+    (let [item1 (get-item sources)]
+      (loop [trials 100]
+        (let [item2 (get-item sources)]
+          (if (= item1 item2)
+            (recur (dec trials))
+            [item1 item2]))))))
