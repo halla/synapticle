@@ -21,9 +21,14 @@
 (defn pairs [data presentation]
   (reify
     player/Player
-    (step-fwd [_ screen channels] (reset! pair (get-combination channels))) 
-    (step-rnd [_ screen channels] (reset! pair (get-combination channels)))
-    (animation [_ screen])
+    (step-fwd [_ screen channels] 
+      (reset! pair (get-combination channels))
+      screen) 
+    (step-rnd [_ screen channels] 
+      (reset! pair (get-combination channels))
+      screen)
+    (animation [_ screen]
+      screen)
     (render [_ screen]
       [:div {:class "pairs"}
        [:div {:class "first panel"} (@pair 0)]

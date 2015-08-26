@@ -9,21 +9,24 @@
 (defn single [data layout]
   (reify 
     player/Player
-    (step-fwd [_]
-      (reset! layout [{:text ((:items (@data 0)) (mod @index (count @data)))
-                       :key (str (rand-int 100000000))
-                       :opacity 1.0}])
-      (swap! index inc))
-    (step-rnd [_]
-      (reset! layout [{:text (mux/get-item data) 
-                       :key (str (rand-int 100000000))
-                       :opacity 1.0}]))
-    (animation [_])
-    (render [_]
+    (step-fwd [_ screen channels]
+      (let [item  [{:text ((:items (@data 0)) (mod @index (count @data)))
+                    :key (str (rand-int 100000000))
+                    :opacity 1.0}]]
+        (swap! index inc)
+        item))
+    (step-rnd [_ screen channels]
+      [{:text (mux/get-item channels) 
+        :key (str (rand-int 100000000))
+        :opacity 1.0}])
+    (animation [_ screen]
+      screen)
+    (render [_ screen]
       [:div {:class "single" 
              :key (rand-int 1000000)
              :style {:position "absolute"
                      :opacity 1.0
+                     :size 20
                      :left "40%"
                      :top "30%"}} 
-       (:text (first @layout) )])))
+       (:text (first @screen) )])))
