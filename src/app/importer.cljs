@@ -37,16 +37,21 @@
       (dispatch-sync [:start])
       (reset! nextword ""))))
 
+
 (defn textfield-component []
   (let [controls (subscribe [:controls]) 
         active-list-idx (reaction (:active-list-idx @controls))
-        channels (subscribe [:channels])
+        channels (subscribe [:channels])        
         active-channel (reaction (@channels @active-list-idx))
-        nextword (atom "")]
+        nextword (atom "")
+        get-class (fn [insert-mode?]
+                    (if insert-mode?
+                      "form-control insert-mode"
+                      "form-control"))]
     (fn []
       [:input {:type "text" 
                :value @nextword
                :placeholder (str "Add item to " (:title @active-channel))
-               :class "form-control"
+               :class (get-class (:insert-mode? @controls))
                :on-change #(reset! nextword (-> % .-target .-value))
                :on-key-down (keydownhandler nextword active-channel)}])))

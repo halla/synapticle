@@ -4,7 +4,8 @@
 
 (def schema {:controls {:dataview-visible? s/Bool
                         :import-visible? s/Bool
-                        :active-list-idx s/Int}
+                        :active-list-idx s/Int
+                        :insert-mode? s/Bool}
              :player {:playstate (s/enum :running :stopped)
                       :playmode s/Str
                       :randomize? s/Bool
@@ -35,7 +36,8 @@
 (def defaults-controls 
   {:dataview-visible? true
    :import-visible? false
-   :active-list-idx 0})
+   :active-list-idx 0
+   :insert-mode? false})
 
 (def defaults-screen 
   [{:text "hep!"

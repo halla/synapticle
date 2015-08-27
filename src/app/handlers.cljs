@@ -144,6 +144,15 @@
  controls-mw
  (fn [db [idx]]  (assoc-in db [:active-list-idx] idx) ))
 
+(register-handler
+ :insert-mode-enable
+ controls-mw
+ (fn [controls _] (assoc-in controls [:insert-mode?] true)))
+
+(register-handler
+ :insert-mode-disable
+ controls-mw
+ (fn [controls _] (assoc-in controls [:insert-mode?] false)))
 
 ;; --- Channel related
 

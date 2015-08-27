@@ -95,7 +95,7 @@
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              ))))
 
-(listen! (sel "#screen") :click 
+(listen! (sel "body") :click 
          (fn [evt]
            (.toggle (js/jQuery "nav"))))
 
@@ -105,7 +105,8 @@
            (enable-console-print!)
             (.toggle (js/jQuery "nav"))))
 
-
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
+(.bind js/Mousetrap "i" #(dispatch-sync [:insert-mode-enable]))
+(.bind js/Mousetrap "esc" #(dispatch-sync [:insert-mode-disable]))
 
 
