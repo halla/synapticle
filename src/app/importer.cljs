@@ -31,7 +31,8 @@
 (defn keydownhandler [nextword active-channel]
   (fn [e]
     (when (= (.-which e) 27) ;esc
-      (reset! nextword ""))
+      (reset! nextword "")
+      (dispatch-sync [:insert-mode-disable]))
     (when (= (.-key e) "Enter")
       (dispatch-sync [:words-add (process-input @nextword) @active-channel])
       (dispatch-sync [:start])
@@ -54,4 +55,10 @@
                :placeholder (str "Add item to " (:title @active-channel))
                :class (get-class (:insert-mode? @controls))
                :on-change #(reset! nextword (-> % .-target .-value))
+               :auto-focus true
                :on-key-down (keydownhandler nextword active-channel)}])))
+
+(defn textfield-overlay-component []
+  (let [controls (subscribe [:controls])]
+    (when (:insert-mode? @controls)
+      (textfield-component))))

@@ -27,7 +27,7 @@
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component]
                   (.getElementById js/document "wordinputs"))
-  (reagent/render [importer/textfield-component]
+  (reagent/render [importer/textfield-overlay-component]
                 (.getElementById js/document "controls-overlay"))
   (reagent/render [views/render-player] (.getElementById js/document "screen")))
 
