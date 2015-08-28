@@ -10,6 +10,7 @@ input[type=range] { min-width: 100px; }
 
 #screen {  position:relative; overflow: hidden; height:100%; background-color: #ffe}
 
+.navbar { z-index: 100}
 .nav-tabs > li  a:hover {
     cursor: pointer;
 }
@@ -25,12 +26,12 @@ input[type=range] { min-width: 100px; }
 .nav-tabs > li .glyphicon { padding: 9px 0;
 }
 
-#controls-overlay { position: absolute; top:0; left:0; right:0; bottom:0; }
+#controls-overlay { position: absolute; top:0px; left:0; right: 0; bottom: 0 }
 #controls-overlay input { display: none;}
 #controls-overlay input.insert-mode {     
     display: block;
     border: none;
-    width: 200px;
+    width: 400px;
     display: block; position: absolute; left: 100px; top: 100px;}
 
 

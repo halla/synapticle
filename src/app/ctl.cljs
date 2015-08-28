@@ -95,7 +95,7 @@
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              ))))
 
-(listen! (sel "body") :click 
+(listen! (sel "#controls-overlay") :click 
          (fn [evt]
            (.toggle (js/jQuery "nav"))))
 
