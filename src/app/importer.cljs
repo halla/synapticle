@@ -58,7 +58,3 @@
                :auto-focus true
                :on-key-down (keydownhandler nextword active-channel)}])))
 
-(defn textfield-overlay-component []
-  (let [controls (subscribe [:controls])]
-    (when (:insert-mode? @controls)
-      (textfield-component))))

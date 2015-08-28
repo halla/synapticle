@@ -20,14 +20,13 @@
 
 (dispatch-sync [:initialize-db])
 
-
 (defn mount-root []
   (reagent/render [ctl/control-panel
                    handlers/playstates                  
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component]
                   (.getElementById js/document "wordinputs"))
-  (reagent/render [importer/textfield-overlay-component]
+  (reagent/render [importer/textfield-component]
                 (.getElementById js/document "controls-overlay"))
   (reagent/render [views/render-player] (.getElementById js/document "screen")))
 

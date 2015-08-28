@@ -144,10 +144,15 @@
  controls-mw
  (fn [db [idx]]  (assoc-in db [:active-list-idx] idx) ))
 
+(defn focus-text-input! []
+  (.focus (js/jQuery "#controls-overlay input")))
+
 (register-handler
  :insert-mode-enable
- controls-mw
- (fn [controls _] (assoc-in controls [:insert-mode?] true)))
+ [controls-mw (after #(js/setTimeout focus-text-input! 100))]
+ (fn [controls _] 
+   
+   (assoc-in controls [:insert-mode?] true)))
 
 (register-handler
  :insert-mode-disable
