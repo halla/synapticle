@@ -63,7 +63,7 @@
     :gain 0.7
     :muted? false}
    {:title "List 2"
-    :items ["hep"]
+    :items []
     :gain 0.7
     :muted? false}
    {:title "List 3"

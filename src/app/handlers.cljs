@@ -145,7 +145,9 @@
  (fn [db [idx]]  (assoc-in db [:active-list-idx] idx) ))
 
 (defn focus-text-input! []
-  (.focus (js/jQuery "#controls-overlay input")))
+  (-> (js/jQuery "#controls-overlay input")
+      (.focus)
+      (.val "")))
 
 (register-handler
  :insert-mode-enable
