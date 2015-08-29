@@ -11,6 +11,7 @@ input[type=range] { min-width: 100px; }
 #screen {  position:relative; overflow: hidden; height:100%; background-color: #ffe}
 
 .navbar { z-index: 100}
+.navbar .help { margin: 0 20px; font-size: 18px; cursor:pointer; }
 .nav-tabs > li  a:hover {
     cursor: pointer;
 }
@@ -29,6 +30,8 @@ input[type=range] { min-width: 100px; }
 #controls-overlay { position: absolute; top:0px; left:0; right: 0; bottom: 0 }
 #controls-overlay input { display: none;}
 #controls-overlay input.insert-mode {     
+    background-color: #ffe;
+    opacity: 0.9;
     display: block;
     border: none;
     width: 400px;

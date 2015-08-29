@@ -24,7 +24,9 @@
     <label for="ipm">Speed:</label><input id="ipm" class="form-control" type="range"  min="1" max="400" value="10" /> <span class="help-text"></span>   
     
   </div>
-
+  <div class="form-group">
+    <span class="help glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+  </div>
   <div id="fileupload-panel">
 
     <form enctype="multipart/form-data" method="post" action="upload.php">
@@ -40,20 +42,35 @@
     <div id="dropTarget" style="width: 100%; height: 100px; border: 1px #ccc solid; padding: 10px;">Drop some files here</div>
     <output id="filesInfo"></output>
   </div>
+  
+  <div id="help">
+    Mouse:
+    <ul>
+      <li>Click screen - Show/hide navbar</li>
+    </ul>
+    Keyboard:
+    <ul>
+      <li>Space - Play/Pause</li>
+      <li>i - Enable insert-mode</li>
+      <li>Esc - Disable insert-mode</li>
+    </ul>        
+  </div>
+
+  <!-- Data view -->
   <div id="dataview">
     <div id="tabs">
-  <ul class="nav nav-tabs">
-    <li role="presentation"><a href="#">List 1</a></li>
-  </ul>
-  <div id="data-tabs-content">
-    <div id="channel-controls">
-    Mix: <input class="channel-mix form-control" type="range" step="0.1" min="0.0" max="1.0"> </input>
+      <ul class="nav nav-tabs">
+        <li role="presentation"><a href="#">List 1</a></li>
+      </ul>
+      <div id="data-tabs-content">
+        <div id="channel-controls">
+          Mix: <input class="channel-mix form-control" type="range" step="0.1" min="0.0" max="1.0"> </input>
+        </div>
+        <ul class="datalist">
+          <li>item1</li>
+        </ul>
+      </div>
     </div>
-    <ul class="datalist">
-      <li>item1</li>
-    </ul>
-  </div>
-</div>
 
     <ul class="nav navbar-nav">
       <li><a id="toggle-import-dlg" href="#">Import</a></li>    
@@ -69,6 +86,6 @@
       </div>
     </div>
   </div>
-
+  <!-- / Data view -->
 </div>
 

@@ -161,6 +161,11 @@
  controls-mw
  (fn [controls _] (assoc-in controls [:insert-mode?] false)))
 
+
+(register-handler
+ :toggle-help
+ controls-mw
+ (fn [controls _]  (update-in controls [:help-visible?] #(not %))))
 ;; --- Channel related
 
 (defn delete [vect item]

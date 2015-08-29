@@ -42,6 +42,7 @@
         controls (subscribe [:controls])
         active-list-idx (reaction (:active-list-idx @controls))
         dataview-visible? (reaction (:dataview-visible? @controls))
+        help-visible? (reaction (:help-visible? @controls))
         import-visible? (reaction (:import-visible? @controls))
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))] 
@@ -93,7 +94,10 @@
              ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
+             [".help" {:on-click #(dispatch-sync [:toggle-help])}]
+             ["#help" {:style (display? help-visible?)}]
              ))))
+
 
 (listen! (sel "#controls-overlay") :click 
          (fn [evt]
@@ -108,5 +112,4 @@
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
 (.bind js/Mousetrap "i" #(dispatch-sync [:insert-mode-enable]))
 (.bind js/Mousetrap "esc" #(dispatch-sync [:insert-mode-disable]))
-
 
