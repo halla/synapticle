@@ -1,4 +1,5 @@
-(ns app.representation)
+(ns app.representation
+  (:require [re-frame.core :refer [dispatch-sync]]))
 
 
 (defn fade-items [items]
@@ -18,14 +19,33 @@
     (update-items)))
 
 
-(defn item->div [{:keys [text color x y size opacity key]} ]
+(defn item->div [{:keys [text color x y size opacity key] :as item} ]
   "Convert internal representation to hiccup html"
-  [:div {:class "item" 
+  [:div {:class "item-container"
          :key key
-         :style {:color color 
-                 :opacity opacity
-                 :left x 
-                 :top y 
-                 :font-size (str size "px")}
-         
-         } text ])
+         :style {:left x
+                 :top y
+                 :overflow "hidden"}
+         :on-mouse-over (fn [e]                         
+                          (.addClass 
+                           (.closest (js/jQuery (.. e -target)) 
+                                     ".item-container") 
+                           "active")
+                          (dispatch-sync [:stop]))
+         :on-mouse-out (fn [e] 
+                         (.remove (.. e -target -classList) "active")
+                         (dispatch-sync [:start]))}
+   [:div {:class "item"           
+          :style {:color color 
+                  :opacity opacity
+                  :font-size (str size "px")}         
+          
+          } text]
+   [:div {:class "meta"
+          :on-click (fn [e] 
+                      (dispatch-sync [:delete text nil])
+                      (dispatch-sync [:screen-rm text])
+                      (dispatch-sync [:start]))} ;; mouse-out not triggered anymore
+    "x"
+    ]   
+   ])

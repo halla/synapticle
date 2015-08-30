@@ -99,6 +99,10 @@
              ))))
 
 
+(listen! (sel "#screen") :click 
+         (fn [evt]
+           (.toggle (js/jQuery "nav"))))
+
 (listen! (sel "#controls-overlay") :click 
          (fn [evt]
            (.toggle (js/jQuery "nav"))))

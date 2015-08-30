@@ -153,13 +153,15 @@
  :insert-mode-enable
  [controls-mw (after #(js/setTimeout focus-text-input! 100))]
  (fn [controls _] 
-   
+   (.addClass (js/jQuery "#controls-overlay") "insert-mode active")
    (assoc-in controls [:insert-mode?] true)))
 
 (register-handler
  :insert-mode-disable
  controls-mw
- (fn [controls _] (assoc-in controls [:insert-mode?] false)))
+ (fn [controls _] 
+   (.removeClass (js/jQuery "#controls-overlay") "insert-mode active")
+   (assoc-in controls [:insert-mode?] false)))
 
 
 (register-handler
@@ -171,13 +173,16 @@
 (defn delete [vect item]
   (vec (remove (fn [word] (= word item)) vect)))
 
+
 (register-handler 
  :delete
  channel-mw
  (fn [channels [item channel]] 
-   (mapv #(if (= % channel)
-            (assoc % :items (delete (:items %) item)) 
-            %) channels)))
+   (if (nil? channel) 
+     (mapv #(assoc % :items (delete (:items %) item)) channels) ;; from all channels for now
+     (mapv #(if (= % channel)
+              (assoc % :items (delete (:items %) item)) 
+              %) channels))))
 
 
 (register-handler 
@@ -198,6 +203,12 @@
    (vec (map #(if (= % channel)
                 (assoc % :items [])
                 %) channels))))
+
+(register-handler
+ :screen-rm
+ screen-mw
+ (fn [db [word]]
+   (update-in db [:screen] #(vec (remove (fn [item] (= word (:text item))) % )) )))
 
 (register-handler
  :mute

@@ -27,7 +27,9 @@ input[type=range] { min-width: 100px; }
 .nav-tabs > li .glyphicon { padding: 9px 0;
 }
 
-#controls-overlay { position: absolute; top:0px; left:0; right: 0; bottom: 0 }
+#controls-overlay { display: none;}
+#controls-overlay.active { position: absolute; top:0px; left:0; right: 0; bottom: 0; display:block}
+
 #controls-overlay input { display: none;}
 #controls-overlay input.insert-mode {     
     background-color: #ffe;
@@ -64,8 +66,11 @@ input[type=range] { min-width: 100px; }
 #fileupload-panel { display: none;}
 
 #dataview .datalist { max-height: 300px; overflow-y: scroll; }
-.item { position: absolute; max-width: 400px; line-height: 1.15}
-
+.item-container { position: absolute;}
+.item {  max-width: 400px; line-height: 1.15}
+.item-container .meta { display:none; cursor: pointer; }
+.item-container.active { border: 1px solid #aaa; padding: 10px; }
+.item-container.active .meta { display: block; position:absolute; top: 0px; right: 0px; padding: 5px } 
 
 .help-text { font-size: 14px; color: #777; max-width: 500px; }
 
