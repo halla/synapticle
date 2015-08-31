@@ -64,6 +64,7 @@
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
              ["#play-state" (playstates (:playstate player))]           
              ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
+             ["#clear-all" {:on-click #(dispatch-sync [:clear-all])}]
              ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
              ["#playmode input.drizzle" (if (= (:playmode @player) "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= (:playmode @player) "pairs") {:checked "true"} {})]
@@ -97,7 +98,6 @@
              [".help" {:on-click #(dispatch-sync [:toggle-help])}]
              ["#help" {:style (display? help-visible?)}]
              ))))
-
 
 (listen! (sel "#screen") :click 
          (fn [evt]

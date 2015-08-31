@@ -205,6 +205,13 @@
                 %) channels))))
 
 (register-handler
+ :clear-all
+ channel-mw
+ (fn [channels _]
+   (vec (map #(assoc % :items []) channels))))
+
+
+(register-handler
  :screen-rm
  screen-mw
  (fn [db [word]]
