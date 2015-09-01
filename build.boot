@@ -1,12 +1,12 @@
 (set-env!
  :source-paths   #{"src"}
  :resource-paths #{"html"}
- :dependencies '[[adzerk/boot-cljs      "0.0-3308-0" :scope "test"]
+ :dependencies '[[adzerk/boot-cljs      "1.7.48-3" :scope "test"]
                  [adzerk/boot-cljs-repl "0.1.10-SNAPSHOT" :scope "test"]
-                 [adzerk/boot-reload    "0.3.1"      :scope "test"]
+                 [adzerk/boot-reload    "0.3.2"      :scope "test"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [prismatic/schema "0.4.4"]
-                 [reagent "0.5.0"]
+                 [prismatic/schema "1.0.0"]
+                 [reagent "0.5.1-rc"]
                  [re-frame "0.4.1"]
                  [cljs-tooling "0.1.7"]
                  [org.clojure/tools.nrepl "0.2.10"]
@@ -18,7 +18,7 @@
                  [org.clojure/clojurescript "1.7.48" ]
                  [boot-cljs-test/node-runner "0.1.0" :scope "test"]
                  [pandeiro/boot-http    "0.6.3"      :scope "test"]
-                 [org.clojure/test.check "0.7.0" :scope "test"]])
+                 [org.clojure/test.check "0.8.1" :scope "test"]])
 
 (require
  '[adzerk.boot-cljs      :refer [cljs]]
