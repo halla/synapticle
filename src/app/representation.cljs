@@ -41,11 +41,13 @@
                   :font-size (str size "px")}         
           
           } text]
-   [:div {:class "meta"
-          :on-click (fn [e] 
-                      (dispatch-sync [:delete text nil])
-                      (dispatch-sync [:screen-rm text])
-                      (dispatch-sync [:start]))} ;; mouse-out not triggered anymore
-    "x"
+   [:div {:class "meta"}
+    [:div {:class "delete-item glyphicon glyphicon-remove"
+           :on-click (fn [e] 
+                       (dispatch-sync [:delete text nil])
+                       (dispatch-sync [:screen-rm text])
+                       (dispatch-sync [:start]) ;; mouse-out not triggered anymore
+                       (.stopPropagation e))}] 
+    ""
     ]   
    ])

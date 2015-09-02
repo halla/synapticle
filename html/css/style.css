@@ -69,8 +69,9 @@ input[type=range] { min-width: 100px; }
 .item-container { position: absolute; padding: 3px; }
 .item {  max-width: 400px; line-height: 1.15}
 .item-container .meta { display:none; cursor: pointer; }
-.item-container.active { border: 1px solid #aaa; padding: 10px; }
+.item-container.active { border: 1px solid #ccc; padding: 10px 15px; background-color: #f9f9e9 }
 .item-container.active .meta { display: block; position:absolute; top: 0px; right: 0px; padding: 5px } 
+.item-container .meta .delete-item { font-size: 10px; color: #555; }
 
 .help-text { font-size: 14px; color: #777; max-width: 500px; }
 
