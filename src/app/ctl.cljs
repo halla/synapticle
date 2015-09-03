@@ -9,9 +9,7 @@
                                    ]])
   (:require-macros [app.templates :refer [deftmpl]]
                    [reagent.ratom :refer [reaction]]
-                   [cljs.core.async.macros :refer [go]])
-  (:use [domina.css :only [sel]]
-        [domina.events :only [listen! target]]))
+                   [cljs.core.async.macros :refer [go]]))
 
 (defn reload-hook []
   (println "RELOAD CTL"))
@@ -99,19 +97,14 @@
              ["#help" {:style (display? help-visible?)}]
              ))))
 
-(listen! (sel "#screen") :click 
-         (fn [evt]
-           (.toggle (js/jQuery "nav"))))
+(.click (js/jQuery "#screen")
+        (fn [evt]
+          (.toggle (js/jQuery "nav"))))
 
-(listen! (sel "#controls-overlay") :click 
-         (fn [evt]
-           (.toggle (js/jQuery "nav"))))
+(.click (js/jQuery "#controls-overlay")
+        (fn [evt]
+          (.toggle (js/jQuery "nav"))))
 
-;(.addEventListener js/document)
-#_(listen! :keydown
-         (fn [evt]
-           (enable-console-print!)
-            (.toggle (js/jQuery "nav"))))
 
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
 (.bind js/Mousetrap "i" #(dispatch-sync [:insert-mode-enable]))
