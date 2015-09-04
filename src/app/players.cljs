@@ -26,7 +26,8 @@
              :key (rand-int 1000000)
              :style {:position "absolute"
                      :opacity 1.0
-                     :size 20
-                     :left "40%"
+                     :font-size "28px"
+                     :text-align "center"
+                     :width "90%";
                      :top "30%"}} 
        (:text (first @screen) )])))
