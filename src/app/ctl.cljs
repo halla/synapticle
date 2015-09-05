@@ -44,7 +44,6 @@
         import-visible? (reaction (:import-visible? @controls))
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))] 
-    
     (fn []
       (xform ctl-tpl 
              ["#import-dlg" {:style (display?  import-visible?)}]
@@ -63,6 +62,11 @@
              ["#play-state" (playstates (:playstate player))]           
              ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
              ["#clear-all" {:on-click #(dispatch-sync [:clear-all])}]
+             ["#export-all" {:on-click (fn []                                          
+                                         (dispatch-sync [:export-all]))}]
+             ["#textarea-export" {:on-click (fn [e]
+                                              (.focus (.-target e))
+                                              (.select (.-target e)))}]
              ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
              ["#playmode input.drizzle" (if (= (:playmode @player) "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= (:playmode @player) "pairs") {:checked "true"} {})]
@@ -75,7 +79,7 @@
                                           (aset (.getElementById js/document "textareaimport") "value" "")
                                           (dispatch-sync [:start])
                                           
-                                                        )}]           
+                                                        )}]         
              ["#playmode .drizzle" {:on-change (fn [] 
                                                  (dispatch-sync [:set-playmode "drizzle"])
                                                  (dispatch-sync [:start]))}]

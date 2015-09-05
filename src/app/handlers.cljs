@@ -210,6 +210,17 @@
  (fn [channels _]
    (vec (map #(assoc % :items []) channels))))
 
+(register-handler
+ :export-all
+ channel-mw
+ (fn [channels _]
+   (.val (js/jQuery "#textarea-export") 
+         (reduce (fn [%1 %2] (str %1 
+                                  (:title %2) 
+                                  "\n" 
+                                  (reduce #(str %1 "\t" %2 "\n") "" (:items %2)))) "" channels))
+   channels
+   ))
 
 (register-handler
  :screen-rm
