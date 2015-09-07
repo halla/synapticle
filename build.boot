@@ -10,6 +10,7 @@
                  [re-frame "0.4.1"]
                  [org.clojure/tools.nrepl "0.2.10"]
                  [dragonmark/web "0.1.8"]
+                 [markdown-clj "0.9.71"]
                  [cljsjs/jquery "1.9.1-0"]
                  [cljsjs/jquery-ui "1.11.3-1"]
                  [cljsjs/mousetrap "1.5.3-0"]

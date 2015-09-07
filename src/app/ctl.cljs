@@ -1,7 +1,8 @@
 (ns app.ctl
   (:require [cljs.core.async :refer [put! chan <! mult tap]]
-            [dragonmark.web.core :as dw :refer [xf xform]]
+            [dragonmark.web.core :as dw :refer [xf xform to-hiccup to-doc-frag]]
             [cljs.reader]
+            [markdown.core :refer [md->html]]
             [cljsjs.mousetrap]
             [reagent.core :as reagent :refer [atom]]     
             [re-frame.core :refer [dispatch-sync
@@ -15,6 +16,8 @@
   (println "RELOAD CTL"))
 
 (deftmpl ctl-tpl "controls.html")
+
+(deftmpl help-tpl "help.html")
 
 (defn display? [visible?]
   (if @visible?
@@ -34,6 +37,7 @@
      [:span {:class (str "glyphicon " (if (:muted? (data i)) "glyphicon-volume-off" "glyphicon-volume-up")) 
              :aria-hidden "true"
              :on-click #(dispatch-sync [:mute (data i)])} ]]))
+
 
 (defn control-panel [playstates]
   (let [player (subscribe [:player])
@@ -98,8 +102,9 @@
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              [".help" {:on-click #(dispatch-sync [:toggle-help])}]
-             ["#help" {:style (display? help-visible?)}]
-             ))))
+             ["#help" {:style (display? help-visible?)} ]
+             ["#help" :*> (to-hiccup (to-doc-frag help-tpl))]))))
+
 
 (.click (js/jQuery "#screen")
         (fn [evt]
@@ -113,4 +118,5 @@
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
 (.bind js/Mousetrap "i" #(dispatch-sync [:insert-mode-enable]))
 (.bind js/Mousetrap "esc" #(dispatch-sync [:insert-mode-disable]))
+
 

@@ -38,7 +38,7 @@
 (def defaults-controls 
   {:dataview-visible? true
    :import-visible? false
-   :help-visible? true
+   :help-visible? false
    :active-list-idx 0
    :insert-mode? false})
 
