@@ -103,8 +103,9 @@
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              [".help" {:on-click #(dispatch-sync [:toggle-help])}]
              ["#help" {:style (display? help-visible?)} ]
-             ["#help" :*> (to-hiccup (to-doc-frag help-tpl))]))))
 
+             ;; there has to be another way...
+             ["#help" :*> (to-hiccup (to-doc-frag (str "<div>" (md->html help-tpl) "</div>")))]))))
 
 (.click (js/jQuery "#screen")
         (fn [evt]
