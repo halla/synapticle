@@ -103,9 +103,7 @@
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              [".help" {:on-click #(dispatch-sync [:toggle-help])}]
              ["#help" {:style (display? help-visible?)} ]
-
-             ;; there has to be another way...
-             ["#help" :*> (to-hiccup (to-doc-frag (str "<div>" (md->html help-tpl) "</div>")))]))))
+             ["#help" :*> (xform ( str "<div>" (md->html help-tpl) "</div>"))]))))
 
 (.click (js/jQuery "#screen")
         (fn [evt]
