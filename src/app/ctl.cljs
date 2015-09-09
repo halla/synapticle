@@ -19,6 +19,8 @@
 
 (deftmpl help-tpl "help.html")
 
+(deftmpl dataview-tpl "dataview.html")
+
 (defn display? [visible?]
   (if @visible?
     "display: block;"
@@ -38,6 +40,36 @@
              :aria-hidden "true"
              :on-click #(dispatch-sync [:mute (data i)])} ]]))
 
+(defn dataview [active-channel channels active-list-idx]
+  (xform dataview-tpl
+         [".datalist li" :* (data-item (:items @active-channel) @active-channel) ]
+         [".nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
+         [".nav-tabs a" 
+          {:on-click #(let [t (.. % -target)
+                            idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
+                        (dispatch-sync [:set-active-channel idx]) )}]
+         ["#channel-controls .channel-mix"  
+          {:value (:gain (@channels @active-list-idx))
+           :on-change #(dispatch-sync 
+                        [:channel-set-mix 
+                         (@channels @active-list-idx) 
+                         (cljs.reader/read-string (.. % -target -value))])}]
+         ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
+         ["#clear-all" {:on-click #(dispatch-sync [:clear-all])}]
+         ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
+         ["#textareaimport-button" 
+          {:on-click 
+           (fn [] 
+             (dispatch-sync [:import
+                             (.-value (.getElementById js/document "textareaimport"))
+                             @active-channel])
+             (aset (.getElementById js/document "textareaimport") "value" "")
+             (dispatch-sync [:start]))}]
+         ["#export-all" {:on-click (fn []                                          
+                                     (dispatch-sync [:export-all]))}]
+         ["#textarea-export" {:on-click (fn [e]
+                                          (.focus (.-target e))
+                                          (.select (.-target e)))}]))
 
 (defn control-panel [playstates]
   (let [player (subscribe [:player])
@@ -54,37 +86,16 @@
              ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" {:style (display? dataview-visible?)}]
-             ["#channel-controls .channel-mix"  {:value (:gain (@channels @active-list-idx))
-                                                 :on-change #(dispatch-sync 
-                                                              [:channel-set-mix (@channels @active-list-idx) (cljs.reader/read-string (.. % -target -value))])}]
-             ["#dataview .datalist li" :* (data-item (:items @active-channel) @active-channel) ]
-             ["#dataview .nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
-             ["#dataview .nav-tabs a" {:on-click #(let [t (.. % -target)
-                                                        idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
-                                                    (dispatch-sync [:set-active-channel idx]) )}]
+             ["#dataview" :*> (dataview active-channel channels active-list-idx)]
+
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
-             ["#play-state" (playstates (:playstate player))]           
-             ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
-             ["#clear-all" {:on-click #(dispatch-sync [:clear-all])}]
-             ["#export-all" {:on-click (fn []                                          
-                                         (dispatch-sync [:export-all]))}]
-             ["#textarea-export" {:on-click (fn [e]
-                                              (.focus (.-target e))
-                                              (.select (.-target e)))}]
-             ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
+             ["#play-state" (playstates (:playstate player))]
+
              ;; how to refer to the attrs of elements here?
              ["#playmode input.drizzle" (if (= (:playmode @player) "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= (:playmode @player) "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= (:playmode @player) "single") {:checked "true"} {})]
-             ["#textareaimport-button" {:on-click 
-                                        (fn [] 
-                                          (dispatch-sync [:import
-                                                          (.-value (.getElementById js/document "textareaimport"))
-                                                          @active-channel])
-                                          (aset (.getElementById js/document "textareaimport") "value" "")
-                                          (dispatch-sync [:start])
-                                          
-                                                        )}]         
+                  
              ["#playmode input" 
               {:on-change (fn [e]
                             (dispatch-sync [:set-playmode 
