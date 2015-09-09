@@ -72,6 +72,7 @@
                                               (.focus (.-target e))
                                               (.select (.-target e)))}]
              ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
+             ;; how to refer to the attrs of elements here?
              ["#playmode input.drizzle" (if (= (:playmode @player) "drizzle") {:checked "true"} {})]
              ["#playmode input.pairs" (if (= (:playmode @player) "pairs") {:checked "true"} {})]
              ["#playmode input.single" (if (= (:playmode @player) "single") {:checked "true"} {})]
@@ -84,15 +85,12 @@
                                           (dispatch-sync [:start])
                                           
                                                         )}]         
-             ["#playmode .drizzle" {:on-change (fn [] 
-                                                 (dispatch-sync [:set-playmode "drizzle"])
-                                                 (dispatch-sync [:start]))}]
-             ["#playmode .pairs" {:on-change (fn [] 
-                                               (dispatch-sync [:set-playmode "pairs"])
-                                               (dispatch-sync [:start]))}]
-             ["#playmode .single" {:on-change (fn [] 
-                                                (dispatch-sync [:set-playmode "single"])
-                                                (dispatch-sync [:start]))}]
+             ["#playmode input" 
+              {:on-change (fn [e]
+                            (dispatch-sync [:set-playmode 
+                                            (.-value (.-target e))])
+                            (dispatch-sync [:start]))}]
+             
              ["#ipm" {:value (Math/floor (* 60  (:items-per-sec @player)))
                       :on-change (fn [evt] 
                                    (dispatch-sync [:set-ipm
