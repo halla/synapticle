@@ -1,9 +1,8 @@
-(ns app.drizzle
-  (:require [app.player :as player]
-            [app.screen :as screen]
-            [app.multiplexer :as mux]
-            [app.representation :as reps]))
-
+(ns app.player.drizzle
+  (:require [app.player.player :as player]
+            [app.player.screen :as screen]
+            [app.player.multiplexer :as mux]
+            [app.player.representation :as reps]))
 
 (defn drizzle [data layout]
   (reify 

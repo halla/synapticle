@@ -5,14 +5,13 @@
             [cljs.core.async :refer [put!]]
             [schema.core :as s :include-macros true]
             [app.db :as db]
-            [app.screen :as screen]
-            [app.multiplexer :as mux]
-            [app.player :as player]
+            [app.player.screen :as screen]
+            [app.player.player :as player]
             [app.importer :as importer]
             [app.datasource :as data]
-            [app.drizzle :as drizzle]
-            [app.pairs :as pairs]
-            [app.players :as players]  
+            [app.player.drizzle :as drizzle]
+            [app.player.pairs :as pairs]
+            [app.player.players :as players]  
             [app.ctl :as ctl]))
 
 

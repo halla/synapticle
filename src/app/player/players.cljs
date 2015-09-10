@@ -1,8 +1,8 @@
-(ns app.players
-  (:require [app.representation :as reps]
-            [app.player :as player]
-            [app.multiplexer :as mux]
-            [app.screen :as screen]))
+(ns app.player.players
+  (:require [app.player.representation :as reps]
+            [app.player.player :as player]
+            [app.player.multiplexer :as mux]
+            [app.player.screen :as screen]))
 
 (defonce index (atom 0))
 

@@ -1,5 +1,5 @@
 (ns app.views
-  (:require [app.player :as player]
+  (:require [app.player.player :as player]
             [app.handlers :as handlers]
             [re-frame.core :refer [subscribe]])
   (:require-macros [reagent.ratom :refer [reaction]]))

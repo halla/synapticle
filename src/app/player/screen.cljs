@@ -1,4 +1,4 @@
-(ns app.screen
+(ns app.player.screen
   (:require
    [reagent.core :as reagent :refer [atom]]))
 

@@ -1,6 +1,6 @@
-(ns app.pairs
-  (:require [app.player :as player]
-            [app.multiplexer :as mux]
+(ns app.player.pairs
+  (:require [app.player.player :as player]
+            [app.player.multiplexer :as mux]
             [reagent.core :as reagent :refer [atom]]))
 
 

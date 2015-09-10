@@ -1,4 +1,4 @@
-(ns app.multiplexer)
+(ns app.player.multiplexer)
 
 (defn get-next-source [sources]
   "Probability of selection based on source mix-level"

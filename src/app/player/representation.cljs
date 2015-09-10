@@ -1,4 +1,4 @@
-(ns app.representation
+(ns app.player.representation
   (:require [re-frame.core :refer [dispatch-sync]]))
 
 

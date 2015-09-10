@@ -1,4 +1,4 @@
-(ns app.player)
+(ns app.player.player)
 
 
 (defprotocol Player
