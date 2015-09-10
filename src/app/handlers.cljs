@@ -1,18 +1,17 @@
 (ns app.handlers
   (:require [re-frame.core :refer [register-handler 
-                                   dispatch-sync after path
+                                   after path
                                    trim-v debug]]
-            [cljs.core.async :refer [put!]]
             [schema.core :as s :include-macros true]
             [app.db :as db]
             [app.player.screen :as screen]
             [app.player.player :as player]
             [app.importer :as importer]
-            [app.datasource :as data]
             [app.player.drizzle :as drizzle]
             [app.player.pairs :as pairs]
             [app.player.players :as players]  
-            [app.ctl :as ctl]))
+            [app.ctl :as ctl]
+            [app.player.handlers])) ;;invoke player handlers
 
 
 (defn check-and-throw
@@ -28,9 +27,6 @@
 
 (def ->ls (after db/db->ls!))
 
-(def player-mw [check-schema-mw
-                (path :player)
-                trim-v])
 
 (def controls-mw [check-schema-mw
                   ->ls
@@ -63,67 +59,7 @@
  (fn [_ _] (merge db/default-value (db/ls->db))))
 
 
-;; -- Player
 
-(defn start [db [_]] ;; TODO remove channel dep
-  (let [player (:player db)
-        interval-new (/ 1000 (:items-per-sec player))
-        interval-anim 50
-        step-func (if (:randomize? player) player/step-rnd player/step-fwd)]
-    (js/clearInterval (:print-timer player))
-    (js/clearInterval (:animation-timer player))
-    (merge-with merge db 
-                {:player {:print-timer (js/setInterval 
-                                        #(dispatch-sync [:step])
-                                        interval-new)
-                          :animation-timer (js/setInterval 
-                                            #(dispatch-sync [:animate])
-                                            interval-anim)
-                          :playstate :running}})))
-
-
-
-(register-handler 
- :start 
- [trim-v]
- start)
-
-(defn stop [db [_]]
-  (js/clearInterval (get-in  db [:player :print-timer]))
-  (js/clearInterval (get-in db [:player :animation-timer]))
-  (assoc-in db [:player :playstate] :stopped))
-
-(register-handler 
- :stop 
- [trim-v]
- stop)
-
-(register-handler 
- :toggle-play 
- [trim-v]
- (fn [db [_]] 
-   (if (= (get-in db [:player :playstate]) :stopped)
-     (start db [])
-     (stop db []))))
-
-(register-handler
- :set-randomize
- player-mw
- (fn [db [randomize?]]
-   (assoc-in db [:randomize?] randomize?)))
-
-
-(register-handler
- :set-playmode
- [player-mw]
- (fn [db [playmode]]
-   (assoc-in db [:playmode] playmode)))
-
-(register-handler
- :set-ipm
- player-mw
- (fn [db [ipm]]
-   (assoc-in db [:items-per-sec] (/ ipm 60))))
 
 
 ;; ----- Controls 
