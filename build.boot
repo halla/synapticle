@@ -2,7 +2,7 @@
  :source-paths   #{"src"}
  :resource-paths #{"html"}
  :dependencies '[[adzerk/boot-cljs      "1.7.48-3" :scope "test"]
-                 [adzerk/boot-cljs-repl "0.1.10-SNAPSHOT" :scope "test"]
+                 [adzerk/boot-cljs-repl "0.1.9" :scope "test"]
                  [adzerk/boot-reload    "0.3.2"      :scope "test"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [prismatic/schema "1.0.0"]
@@ -28,13 +28,13 @@
 
 (require 'boot.repl)
 (swap! boot.repl/*default-dependencies*
-       concat '[[cider/cider-nrepl "0.10.0-SNAPSHOT"]])
+       concat '[[cider/cider-nrepl "0.9.1"]])
 
 (swap! boot.repl/*default-middleware*
        conj 'cider.nrepl/cider-middleware)
 
 (swap! boot.repl/*default-dependencies* conj
-       '[refactor-nrepl "1.1.0-SNAPSHOT"])
+       '[refactor-nrepl "1.1.0"])
 
 (swap! boot.repl/*default-middleware* conj
        'refactor-nrepl.middleware/wrap-refactor)
