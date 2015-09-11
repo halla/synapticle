@@ -6,6 +6,7 @@
             [app.ctl :as ctl]
             [app.views :as views]
             [app.handlers :as handlers]
+            [app.player.handlers :as playerhandlers]
             [app.subscribables]
             [cljsjs.jquery]))
 
@@ -23,7 +24,7 @@
 
 (defn mount-root []
   (reagent/render [ctl/control-panel
-                   handlers/playstates                  
+                   playerhandlers/playstates ;;todo something
                    ] (.getElementById js/document "controls"))
   (reagent/render [importer/textfield-component]
                   (.getElementById js/document "wordinputs"))

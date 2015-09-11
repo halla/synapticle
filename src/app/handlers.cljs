@@ -4,12 +4,7 @@
                                    trim-v debug]]
             [schema.core :as s :include-macros true]
             [app.db :as db]
-            [app.player.screen :as screen]
-            [app.player.player :as player]
             [app.importer :as importer]
-            [app.player.drizzle :as drizzle]
-            [app.player.pairs :as pairs]
-            [app.player.players :as players]  
             [app.ctl :as ctl]
             [app.player.handlers])) ;;invoke player handlers
 
@@ -38,18 +33,6 @@
                  (path :channels)
                  trim-v])
 
-(def screen-mw [check-schema-mw
-                trim-v])
-
-(def playstates {:stopped "Stopped"
-                 :running "Running"})
-
-(def playmodes {"drizzle" drizzle/drizzle
-                "pairs" pairs/pairs
-                "single" players/single})
-
-(defn get-player [mode channels] ; runs on every animation frame?  
-  ((playmodes mode) channels screen/divs))
 
 ;: -- re-frame style handlers
 
@@ -134,7 +117,7 @@
  :clear 
  channel-mw
  (fn [channels [channel]]
-   (screen/clear)
+;   (screen/clear) ; todo separate clear handler 
    (vec (map #(if (= % channel)
                 (assoc % :items [])
                 %) channels))))
@@ -154,14 +137,7 @@
                                   (:title %2) 
                                   "\n" 
                                   (reduce #(str %1 "\t" %2 "\n") "" (:items %2)))) "" channels))
-   channels
-   ))
-
-(register-handler
- :screen-rm
- screen-mw
- (fn [db [word]]
-   (update-in db [:screen] #(vec (remove (fn [item] (= word (:text item))) % )) )))
+   channels))
 
 (register-handler
  :mute
@@ -190,24 +166,3 @@
                 %) channels))))
 
 
-; -- screen
-
-(register-handler
- :step
- [screen-mw]
- (fn [db]
-   (let [step-func (if (:randomize? (:player db)) player/step-rnd player/step-fwd)]
-     (assoc-in db [:screen] 
-               (step-func (get-player (:playmode (:player db)) (:channels db))
-                          (:screen db)
-                          (:channels db))))))
-
-
-(register-handler
- :animate
- screen-mw
- (fn [db]
-   (assoc-in db [:screen]
-             (player/animation
-              (get-player (:playmode (:player db)) (:channels db))
-              (:screen db)))))

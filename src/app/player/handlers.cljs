@@ -3,6 +3,10 @@
                                    dispatch-sync]]
             [app.db :as db]
             [app.player.player :as player]
+            [app.player.drizzle :as drizzle]
+            [app.player.pairs :as pairs]
+            [app.player.players :as players]  
+            [app.player.screen :as screen]
             [schema.core :as s :include-macros true]))
 
 
@@ -19,6 +23,18 @@
                 (path :player)
                 trim-v])
 
+(def screen-mw [check-schema-mw
+                trim-v])
+
+(def playstates {:stopped "Stopped"
+                 :running "Running"})
+
+(def playmodes {"drizzle" drizzle/drizzle
+                "pairs" pairs/pairs
+                "single" players/single})
+
+(defn get-player [mode channels] ; runs on every animation frame?  
+  ((playmodes mode) channels screen/divs))
 
 ;; -- Player
 
@@ -80,3 +96,33 @@
  player-mw
  (fn [db [ipm]]
    (assoc-in db [:items-per-sec] (/ ipm 60))))
+
+; -- screen
+
+(register-handler
+ :step
+ [screen-mw]
+ (fn [db]
+   (let [step-func (if (:randomize? (:player db)) player/step-rnd player/step-fwd)]
+     (assoc-in db [:screen] 
+               (step-func (get-player (:playmode (:player db)) (:channels db))
+                          (:screen db)
+                          (:channels db))))))
+
+
+(register-handler
+ :animate
+ screen-mw
+ (fn [db]
+   (assoc-in db [:screen]
+             (player/animation
+              (get-player (:playmode (:player db)) (:channels db))
+              (:screen db)))))
+
+(register-handler
+ :screen-rm
+ screen-mw
+ (fn [db [word]]
+   (update-in db [:screen] #(vec (remove (fn [item] (= word (:text item))) % )) )))
+
+;; :screen-clear
