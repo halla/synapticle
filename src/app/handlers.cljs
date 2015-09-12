@@ -148,21 +148,21 @@
                 %) channels))))
 
 
+(defn add-words [channels words channel] 
+  (mapv #(if (= % channel)
+           (assoc % :items (vec (concat (:items %) words))) 
+           %) channels))
+
 (register-handler
  :import
  channel-mw
  (fn [channels [text channel]]
-   (vec (map #(if (= % channel)
-                (assoc % :items (vec (concat (:items %) (importer/process-input text)))) 
-                %) channels))))
+   (add-words channels (importer/process-input text) channel)))
 
 (register-handler
  :words-add
  channel-mw
- (fn [channels [words channel]]
-   channels   
-   (vec (map #(if (= % channel)
-                (assoc % :items (vec (concat (:items %) words))) 
-                %) channels))))
+ (fn [channels [words channel]]    
+   (add-words channels words channel)))
 
 
