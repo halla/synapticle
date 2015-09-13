@@ -26,6 +26,11 @@
     "display: block;"
     "display: none;"))
 
+(defn visibility-class [visible?]
+  (if visible?
+    ""
+    "hidden"))
+
 (defn data-item [items channel]
   (for [item items] 
     [:div  
@@ -40,7 +45,9 @@
              :aria-hidden "true"
              :on-click #(dispatch-sync [:mute (data i)])} ]]))
 
-(defn dataview [active-channel channels active-list-idx]
+
+(defn dataview [active-channel channels active-list-idx import-visible?]
+  "Editing channels and data"
   (xform dataview-tpl
          [".datalist li" :* (data-item (:items @active-channel) @active-channel) ]
          [".nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
@@ -57,6 +64,9 @@
          ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
          ["#clear-all" {:on-click #(dispatch-sync [:clear-all])}]
          ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
+
+
+         ["#import-dlg" {:class (visibility-class @import-visible?)}]
          ["#textareaimport-button" 
           {:on-click 
            (fn [] 
@@ -82,11 +92,11 @@
         active-channel (reaction (@channels @active-list-idx))] 
     (fn []
       (xform ctl-tpl 
-             ["#import-dlg" {:style (display?  import-visible?)}]
+
              ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" {:style (display? dataview-visible?)}]
-             ["#dataview" :*> (dataview active-channel channels active-list-idx)]
+             ["#dataview" :*> (dataview active-channel channels active-list-idx import-visible?)]
 
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
              ["#play-state" (playstates (:playstate player))]
