@@ -1,5 +1,6 @@
 (ns app.subscribables
-  (:require [re-frame.core :refer [register-sub]])
+  (:require [re-frame.core :refer [register-sub]]
+            [app.datasource.subs])
   (:require-macros [reagent.ratom :refer [reaction]]))
 
 ;; re-frame style subs
@@ -11,3 +12,4 @@
 (register-sub :channels (fn [db _] (reaction (:channels @db))))
 
 (register-sub :screen (fn [db _] (reaction (:screen @db))))
+

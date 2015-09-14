@@ -1,14 +1,19 @@
-(ns app.datasource.views)
+(ns app.datasource.views
+  (:require [re-frame.core :refer [dispatch-sync
+                                   subscribe
+                                   ]]))
 
 
 (def dummylist ["Set 1" "Set 2"])
-(defn dataset-list []
-  [:ul  (for [item dummylist] [:li item]) ])
+
+(defn dataset-list [datasets]
+  [:ul  (for [dataset datasets] [:li (:title dataset)]) ])
 
 
 (defn browser []
-  "Browse available data sources"
-  (dataset-list)
+  (let [datasets (subscribe [:datasets])]
+    "Browse available data sources"
+    (dataset-list @datasets))
   )
 
 

@@ -1,5 +1,6 @@
 (ns app.db
   (:require [reagent.core]
+            [app.datasource.db :as datasource]
             [schema.core :as s :include-macros true]))
 
 (def schema {:controls {:dataview-visible? s/Bool
@@ -24,7 +25,8 @@
                        :text s/Str
                        (s/optional-key :opacity) s/Num
                        :key s/Str
-                       }]})
+                       }]
+             :datasets datasource/schema})
 
 
 (def defaults-player
@@ -92,8 +94,8 @@
   {:controls defaults-controls
    :player defaults-player
    :channels defaults-channels
-   :screen defaults-screen } )
-
+   :screen defaults-screen
+   :datasets datasource/default-value} )
 
 
 
