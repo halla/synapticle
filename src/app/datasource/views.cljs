@@ -7,7 +7,9 @@
 (def dummylist ["Set 1" "Set 2"])
 
 (defn dataset-list [datasets]
-  [:ul  (for [dataset datasets] [:li (:title dataset)]) ])
+  [:div {:class "inner"}
+   [:h3 "Data browser"]
+   [:ul  (for [dataset datasets] [:li (:title dataset)]) ]])
 
 
 (defn browser []
