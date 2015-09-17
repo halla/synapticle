@@ -1,15 +1,26 @@
 (ns app.datasource.db
   (:require [schema.core :as s :include-macros true]))
 
-(def schema [{:title s/Str
-              :items [s/Str]}])
+
+(def Tree {:value s/Str
+           (s/optional-key :children) [(s/recursive #'Tree)]
+           (s/optional-key :visible?) s/Bool})
+
+(def schema [Tree]) ;; each "set" is a tree
+
 
 (def default-value
-  [{:title "Colors"
-    :items ["red"
-            "green"
-            "blue"
-            ]}  
+  [{:value "Colors"
+    :children [{:value "red"}
+               {:value "green"}
+               {:value "blue"}]}  
+   {:value "Questions"
+    :children [{:value "What if?"} 
+               {:value "What else?"}]}
+   {:value "Expand"
+    :children [{:value "imagine"} 
+               {:value "possible"} 
+               {:value "future"}]}
    ])
 
 
