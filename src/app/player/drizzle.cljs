@@ -4,7 +4,9 @@
             [app.player.multiplexer :as mux]
             [app.player.representation :as reps]))
 
-(defn drizzle [data layout]
+(def frame (atom 0))
+
+(defn drizzle [data layout]  
   (reify 
     player/Player
     (step-fwd [_ screen channels]
@@ -14,7 +16,11 @@
                     (mux/get-item channels) 
                     screen))
       #_(swap! layout #(conj % (screen/gen-item (mux/get-item data)))))
-    (animation [_ screen] (reps/fade-screen screen))
+    (animation [_ screen] 
+      (swap! frame #(inc %)) 
+      (if (= (mod @frame 2) 0) ;; 25/s 
+        (reps/fade-screen screen 0.02)
+        screen))
     (render [_ screen]
       [:div {:key (str (rand-int 10000000))} (doall (for [i @screen] (reps/item->div i)))]
       )))

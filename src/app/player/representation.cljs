@@ -2,22 +2,14 @@
   (:require [re-frame.core :refer [dispatch-sync]]))
 
 
-(defn fade-items [items]
-  (map #(assoc % :opacity (- (:opacity %) 0.005)) items))
+(defn fade-items [items amount]
+  (map #(assoc % :opacity (- (:opacity %) amount)) items))
 
-
-(defn fade-screen! [items]
+(defn fade-screen [items amount]
   "Fade items, remove invisisible ones."
   (letfn [(update-items []
-            (filter #(< 0 (:opacity %)) (fade-items @items)))]
-    (reset! items (update-items))))
-
-(defn fade-screen [items]
-  "Fade items, remove invisisible ones."
-  (letfn [(update-items []
-            (filter #(< 0 (:opacity %)) (fade-items items)))]
+            (filter #(< 0 (:opacity %)) (fade-items items amount)))]
     (update-items)))
-
 
 (defn item->div [{:keys [text color x y size opacity key] :as item} ]
   "Convert internal representation to hiccup html"
