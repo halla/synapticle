@@ -45,10 +45,17 @@
              :aria-hidden "true"
              :on-click #(dispatch-sync [:mute (data i)])} ]]))
 
+(defn allow-drop [e]
+  (.preventDefault e))
 
 (defn dataview [active-channel channels active-list-idx import-visible?]
   "Editing channels and data"
   (xform dataview-tpl
+         [".datalist" {:on-drag-over allow-drop
+                       :on-drag-enter allow-drop
+                       :on-drop (fn [e] (.preventDefault e)
+                                  (let [text (.getData (.-dataTransfer e) "text")]
+                                    (dispatch-sync [:words-add [text] @active-channel])))}]
          [".datalist li" :* (data-item (:items @active-channel) @active-channel) ]
          [".nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
          [".nav-tabs a" 
@@ -136,5 +143,4 @@
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
 (.bind js/Mousetrap "i" #(dispatch-sync [:insert-mode-enable]))
 (.bind js/Mousetrap "esc" #(dispatch-sync [:insert-mode-disable]))
-
 

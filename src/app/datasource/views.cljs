@@ -7,6 +7,9 @@
 (def dummylist ["Set 1" "Set 2"])
 
 
+(defn allow-drop [e]
+  (.preventDefault e)) 
+
 (declare dataset-list-item)
 
 (defn dataset-list-root [root]  
@@ -14,9 +17,12 @@
   (println root)
   [:ul (dataset-list-item root)])
 
+
 (defn dataset-list-item [{:keys [value children] :as root}]
   (list
-   [:li value]
+   [:li {:draggable true
+         :on-drag-start #(.setData (.-dataTransfer %) "text" value)
+         } value]
    (when children
      (for [child children]
        (dataset-list-root child)))))
