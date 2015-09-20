@@ -54,8 +54,8 @@
          [".datalist" {:on-drag-over allow-drop
                        :on-drag-enter allow-drop
                        :on-drop (fn [e] (.preventDefault e)
-                                  (let [text (.getData (.-dataTransfer e) "text")]
-                                    (dispatch-sync [:words-add [text] @active-channel])))}]
+                                  (let [tree (.getData (.-dataTransfer e) "text")]
+                                    (dispatch-sync [:import tree @active-channel])))}]
          [".datalist li" :* (data-item (:items @active-channel) @active-channel) ]
          [".nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
          [".nav-tabs a" 
