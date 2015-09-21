@@ -21,6 +21,27 @@
 
 (deftmpl dataview-tpl "dataview.html")
 
+
+(defn title-input [{:keys [title on-save on-stop]}]
+  (let [val (atom title)
+        stop #(do (on-stop)
+                  (reset! val ""))
+        save #(let [v (clojure.string/trim @val)] 
+                (on-save v)
+                (stop))]
+    (fn []
+      [:input {:value @val
+               :on-blur save
+               :on-change #(reset! val (-> % .-target .-value))
+               :on-key-down #(case (.-which %)
+                               13 (save)
+                               27 (stop)
+                               nil)}])))
+
+(def title-edit (with-meta title-input
+                 {:component-did-mount #(.focus (reagent/dom-node %))}))
+
+
 (defn display? [visible?]
   (if @visible?
     "display: block;"
@@ -31,19 +52,35 @@
     ""
     "hidden"))
 
+
 (defn data-item [items channel]
   (for [item items] 
     [:div  
      [:span item] 
      [:button {:on-click #(dispatch-sync [:delete item channel])} "D"]]))
 
-(defn data-tab-item [data active-idx]
-  (for [i (range (count data))] 
-    [:div {:class (str "muted-" (:muted? (data i)) (when (= active-idx i) " active"))}
-     [:a {:data-idx i} (:title (data i))]
-     [:span {:class (str "glyphicon " (if (:muted? (data i)) "glyphicon-volume-off" "glyphicon-volume-up")) 
-             :aria-hidden "true"
-             :on-click #(dispatch-sync [:mute (data i)])} ]]))
+(defn channel-title [{:keys [title i channels]}]
+  (let [editing (atom false)]
+    (fn []
+      [:a {:data-idx i
+           :on-click #(dispatch-sync [:set-active-channel i])
+           :on-double-click #(reset! editing (not @editing))}
+       (if @editing
+         [title-edit {:title (:title (@channels i))
+                       :on-save #(dispatch-sync [:channel-set-title i %])
+                       :on-stop #(reset! editing false)}]
+         [:span {:class (str "view" @editing)} (:title (@channels i))])])))
+
+(defn data-tab-item [channels active-idx]
+  (let [data @channels]
+    (for [i (range (count data))] 
+      [:div {:class (str "muted-" (:muted? (data i)) (when (= active-idx i) " active"))}
+       [channel-title {:title (:title (@channels i))
+                       :i i
+                       :channels channels}]
+       [:span {:class (str "glyphicon " (if (:muted? (data i)) "glyphicon-volume-off" "glyphicon-volume-up")) 
+               :aria-hidden "true"
+               :on-click #(dispatch-sync [:mute (data i)])} ]])))
 
 (defn allow-drop [e]
   (.preventDefault e))
@@ -57,11 +94,9 @@
                                   (let [tree (.getData (.-dataTransfer e) "text")]
                                     (dispatch-sync [:import tree @active-channel])))}]
          [".datalist li" :* (data-item (:items @active-channel) @active-channel) ]
-         [".nav-tabs li" :* (data-tab-item @channels @active-list-idx) ]
+         [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
          [".nav-tabs a" 
-          {:on-click #(let [t (.. % -target)
-                            idx (cljs.reader/read-string (.getAttribute t "data-idx"))] 
-                        (dispatch-sync [:set-active-channel idx]) )}]
+          ]
          ["#channel-controls .channel-mix"  
           {:value (:gain (@channels @active-list-idx))
            :on-change #(dispatch-sync 

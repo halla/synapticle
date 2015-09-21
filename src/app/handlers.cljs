@@ -4,9 +4,12 @@
                                    trim-v debug]]
             [schema.core :as s :include-macros true]
             [app.db :as db]
+            [app.datasource.db]
             [app.importer :as importer]
             [app.ctl :as ctl]
-            [app.player.handlers])) ;;invoke player handlers
+            [app.player.handlers]
+#_            [app.datasource.handlers]
+            )) ;;invoke player handlers
 
 
 (defn check-and-throw
@@ -54,7 +57,7 @@
 
 (register-handler 
  :toggle-import-visibility 
- controls-mw
+ [controls-mw]
  (fn [db _] (update-in db [:import-visible?] #(not %))))
 
 (register-handler 
@@ -91,7 +94,6 @@
 (defn delete [vect item]
   (vec (remove (fn [word] (= word item)) vect)))
 
-
 (register-handler 
  :delete
  channel-mw
@@ -112,6 +114,16 @@
                 (assoc % :gain value) 
                 %) channels))))
 
+(register-handler 
+ :channel-set-title
+ channel-mw
+ (fn 
+   [channels [channel-i value]] 
+   (vec (map #(if (= % (channels channel-i))
+                (assoc % :title value) 
+                %) channels))))
+
+
 ;; todo decouple this
 (register-handler 
  :clear 
@@ -127,6 +139,7 @@
  channel-mw
  (fn [channels _]
    (vec (map #(assoc % :items []) channels))))
+
 
 (register-handler
  :export-all
@@ -164,5 +177,4 @@
  channel-mw
  (fn [channels [words channel]]    
    (add-words channels words channel)))
-
 
