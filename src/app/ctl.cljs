@@ -53,11 +53,25 @@
     "hidden"))
 
 
-(defn data-item [items channel]
-  (for [item items] 
-    [:div  
-     [:span item] 
-     [:button {:on-click #(dispatch-sync [:delete item channel])} "D"]]))
+(defn data-item [item channel]
+  (let [editing (atom true)
+        channels (subscribe [:channels])]
+    (fn []      
+      @channels
+      [:div  
+       (if @editing
+         [title-edit {:title item
+                      :on-save #(dispatch-sync [:channel-update-item @channel item %])
+                      :on-stop #(reset! editing false)}]
+         [:span {:on-click #(reset! editing (not @editing))} item]) 
+       [:button {:on-click #(dispatch-sync [:delete item @channel])} "D"]])))
+
+(defn data-items [items channel]
+  (let [items (reaction (:items @channel))] ;;items update but not on the screen for some reason
+    (fn []
+      [:ul        
+       (for [item @items] 
+         [data-item item channel])])))
 
 (defn channel-title [{:keys [title i channels]}]
   (let [editing (atom false)]
@@ -93,7 +107,7 @@
                        :on-drop (fn [e] (.preventDefault e)
                                   (let [tree (.getData (.-dataTransfer e) "text")]
                                     (dispatch-sync [:import tree @active-channel])))}]
-         [".datalist li" :* (data-item (:items @active-channel) @active-channel) ]
+         [".datalist" [data-items (:items @active-channel) active-channel] ]
          [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
          [".nav-tabs a" 
           ]
