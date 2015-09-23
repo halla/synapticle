@@ -39,7 +39,8 @@
                                nil)}])))
 
 (def title-edit (with-meta title-input
-                 {:component-did-mount #(.focus (reagent/dom-node %))}))
+                  {:component-did-mount #(do (.focus (reagent/dom-node %))
+                                             (.select (reagent/dom-node %)))}))
 
 
 (defn display? [visible?]
@@ -68,7 +69,7 @@
 
 (defn data-items [items channel]
   (let [items (reaction (:items @channel))] ;;items update but not on the screen for some reason
-    (fn []
+    (fn [] 
       [:ul        
        (for [item @items] 
          [data-item item channel])])))
