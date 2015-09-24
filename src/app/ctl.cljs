@@ -29,7 +29,7 @@
         save #(let [v (clojure.string/trim @val)] 
                 (on-save v)
                 (stop))]
-    (fn []
+    (fn [{:keys [title on-save on-stop]}]
       [:input {:value @val
                :on-blur save
                :on-change #(reset! val (-> % .-target .-value))
@@ -55,28 +55,26 @@
 
 
 (defn data-item [item channel]
-  (let [editing (atom true)
-        channels (subscribe [:channels])]
-    (fn []      
-      @channels
-      [:div  
+  (let [editing (atom false)]
+    (fn [item channel]  
+      [:div {:class "channel-item"}  
        (if @editing
          [title-edit {:title item
                       :on-save #(dispatch-sync [:channel-update-item @channel item %])
                       :on-stop #(reset! editing false)}]
          [:span {:on-click #(reset! editing (not @editing))} item]) 
-       [:button {:on-click #(dispatch-sync [:delete item @channel])} "D"]])))
+       [:button {:class "btn btn-xs"
+                 :on-click #(dispatch-sync [:delete item @channel])} 
+        [:span {:class "glyphicon glyphicon-remove"}]]])))
 
 (defn data-items [items channel]
-  (let [items (reaction (:items @channel))] ;;items update but not on the screen for some reason
-    (fn [] 
-      [:ul        
-       (for [item @items] 
-         [data-item item channel])])))
+  [:ul        
+   (for [item items] 
+     [data-item item channel])])
 
 (defn channel-title [{:keys [title i channels]}]
   (let [editing (atom false)]
-    (fn []
+    (fn [{:keys [title i channels]}]
       [:a {:data-idx i
            :on-click #(dispatch-sync [:set-active-channel i])
            :on-double-click #(reset! editing (not @editing))}
