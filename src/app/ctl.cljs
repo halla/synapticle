@@ -5,6 +5,7 @@
             [markdown.core :refer [md->html]]
             [cljsjs.mousetrap]
             [reagent.core :as reagent :refer [atom]]     
+            [re-com.core :refer [button]]
             [re-frame.core :refer [dispatch-sync
                                    subscribe
                                    ]])
@@ -116,12 +117,22 @@
                         [:channel-set-mix 
                          (@channels @active-list-idx) 
                          (cljs.reader/read-string (.. % -target -value))])}]
-         ["#clear-screen" {:on-click #(dispatch-sync [:clear @active-channel])}]
-         ["#clear-all" {:on-click #(dispatch-sync [:clear-all])}]
          ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
-
-
          ["#import-dlg" {:class (visibility-class @import-visible?)}]
+         [".buttons" :*> (list [:li [button 
+                                     :label "Clear"
+                                     :disabled? false
+                                     :on-click #(dispatch-sync [:clear @active-channel])
+                                     :tooltip "Remove all items from this channel"]]
+                               [:li [button 
+                                     :label "Clear all"
+                                     :on-click #(dispatch-sync [:clear-all])
+                                     :tooltip "Remove all items from all channels"]]
+                               [:li [button
+                                     :label "Export"
+                                     :on-click #(dispatch-sync [:export-all])
+                                     :tooltip "Export items from all channels as plain text list"]])]
+         
          ["#textareaimport-button" 
           {:on-click 
            (fn [] 
@@ -130,8 +141,6 @@
                              @active-channel])
              (aset (.getElementById js/document "textareaimport") "value" "")
              (dispatch-sync [:start]))}]
-         ["#export-all" {:on-click (fn []                                          
-                                     (dispatch-sync [:export-all]))}]
          ["#textarea-export" {:on-click (fn [e]
                                           (.focus (.-target e))
                                           (.select (.-target e)))}]))
