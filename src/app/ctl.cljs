@@ -5,7 +5,11 @@
             [markdown.core :refer [md->html]]
             [cljsjs.mousetrap]
             [reagent.core :as reagent :refer [atom]]     
-            [re-com.core :refer [button]]
+            [re-com.core  :refer [h-box v-box box gap line label checkbox 
+                                  radio-button button single-dropdown
+                                  input-textarea
+                                  popover-content-wrapper popover-anchor-wrapper]]
+            [re-com.util :refer [deref-or-value]]
             [re-frame.core :refer [dispatch-sync
                                    subscribe
                                    ]])
@@ -21,6 +25,61 @@
 (deftmpl help-tpl "help.html")
 
 (deftmpl dataview-tpl "dataview.html")
+
+(defn import-component-body-func [submit-dialog cancel-dialog dialog-data]  
+  (fn []
+    [v-box
+     :children [[label
+                 :label "Type (or paste) text into the text area (one item per line) and hit import."]
+                [gap :size "15px"]
+                [h-box
+                 :children [[input-textarea
+                             :model            dialog-data
+                             :width            "300px"
+                             :rows             10
+                             :placeholder      "Enter items, one per line \n item"
+                             :on-change        #(reset! dialog-data %)
+                             :change-on-blur?  true]]]
+                [gap :size "20px"]
+                [line]
+                [gap :size "10px"]
+                [h-box
+                 :gap      "10px"
+                 :children [[button
+                             :label    [:span [:i {:class "zmdi zmdi-check" }] " Apply"]
+                             :on-click #(submit-dialog @dialog-data)
+                             :class    "btn-primary"]]]]]))
+
+(defn popover-body
+  [showing? position dialog-data on-change]
+  (let [dialog-data   (reagent/atom (deref-or-value dialog-data))
+        submit-dialog (fn [new-dialog-data]
+                        (reset! showing? false)
+                        (on-change new-dialog-data))
+        cancel-dialog #(reset! showing? false)]
+    (fn []
+      [popover-content-wrapper
+       :showing?         showing?
+       :on-cancel        cancel-dialog
+       :position         position
+       :width            "400px"
+       :backdrop-opacity 0.3
+       :title            "Import items"
+       :body             [(import-component-body-func submit-dialog cancel-dialog dialog-data)]])))
+
+
+(defn import-dlg [active-channel]
+  (let [showing? (atom false)
+        dlg-data (atom "")
+        on-change #(dispatch-sync [:import % @active-channel])]
+    (fn []
+      [popover-anchor-wrapper
+       :showing? showing?
+       :position :right-below
+       :anchor [button 
+                :label "Import"
+                :on-click #(reset! showing? true)]
+       :popover [popover-body showing? :right-below dlg-data on-change]])))
 
 
 (defn title-input [{:keys [title on-save on-stop]}]
@@ -119,7 +178,8 @@
                          (cljs.reader/read-string (.. % -target -value))])}]
          ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
          ["#import-dlg" {:class (visibility-class @import-visible?)}]
-         [".buttons" :*> (list [:li [button 
+         [".buttons" :*> (list [:li [import-dlg active-channel]]
+                               [:li [button 
                                      :label "Clear"
                                      :disabled? false
                                      :on-click #(dispatch-sync [:clear @active-channel])
