@@ -30,23 +30,23 @@
   (fn []
     [v-box
      :children [[label
+                 :class "help-text"
                  :label "Type (or paste) text into the text area (one item per line) and hit import."]
                 [gap :size "15px"]
-                [h-box
-                 :children [[input-textarea
-                             :model            dialog-data
-                             :width            "300px"
-                             :rows             10
-                             :placeholder      "Enter items, one per line \n item"
-                             :on-change        #(reset! dialog-data %)
-                             :change-on-blur?  true]]]
+                [input-textarea
+                 :model            dialog-data
+                 :width            "100%"
+                 :rows             10
+                 :placeholder      "Enter items, one per line"
+                 :on-change        #(reset! dialog-data %)
+                 :change-on-blur?  true]
                 [gap :size "20px"]
                 [line]
                 [gap :size "10px"]
                 [h-box
                  :gap      "10px"
                  :children [[button
-                             :label    [:span [:i {:class "zmdi zmdi-check" }] " Apply"]
+                             :label    [:span [:i {:class "zmdi zmdi-check" }] "Import"]
                              :on-click #(submit-dialog @dialog-data)
                              :class    "btn-primary"]]]]]))
 
@@ -158,7 +158,7 @@
 (defn allow-drop [e]
   (.preventDefault e))
 
-(defn dataview [active-channel channels active-list-idx import-visible?]
+(defn dataview [active-channel channels active-list-idx]
   "Editing channels and data"
   (xform dataview-tpl
          [".datalist" {:on-drag-over allow-drop
@@ -176,8 +176,6 @@
                         [:channel-set-mix 
                          (@channels @active-list-idx) 
                          (cljs.reader/read-string (.. % -target -value))])}]
-         ["#toggle-import-dlg" {:on-click #(dispatch-sync [:toggle-import-visibility])}]
-         ["#import-dlg" {:class (visibility-class @import-visible?)}]
          [".buttons" :*> (list [:li [import-dlg active-channel]]
                                [:li [button 
                                      :label "Clear"
@@ -191,16 +189,7 @@
                                [:li [button
                                      :label "Export"
                                      :on-click #(dispatch-sync [:export-all])
-                                     :tooltip "Export items from all channels as plain text list"]])]
-         
-         ["#textareaimport-button" 
-          {:on-click 
-           (fn [] 
-             (dispatch-sync [:import
-                             (.-value (.getElementById js/document "textareaimport"))
-                             @active-channel])
-             (aset (.getElementById js/document "textareaimport") "value" "")
-             (dispatch-sync [:start]))}]
+                                     :tooltip "Export items from all channels as plain text list"]])]                
          ["#textarea-export" {:on-click (fn [e]
                                           (.focus (.-target e))
                                           (.select (.-target e)))}]))
@@ -211,7 +200,6 @@
         active-list-idx (reaction (:active-list-idx @controls))
         dataview-visible? (reaction (:dataview-visible? @controls))
         help-visible? (reaction (:help-visible? @controls))
-        import-visible? (reaction (:import-visible? @controls))
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))] 
     (fn []
@@ -220,7 +208,7 @@
              ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" {:style (display? dataview-visible?)}]
-             ["#dataview" :*> (dataview active-channel channels active-list-idx import-visible?)]
+             ["#dataview" :*> (dataview active-channel channels active-list-idx)]
 
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
              ["#play-state" (playstates (:playstate player))]
