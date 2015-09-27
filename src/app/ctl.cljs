@@ -166,14 +166,13 @@
   (let [show? (reagent/atom false)]
     (fn []
       [v-box
-       :children [[:span {:label    "Please wait message"
-                          :class    "help glyphicon glyphicon-question-sign"
+       :children [[:span {:class "help glyphicon glyphicon-question-sign"
                           :on-click #(reset! show? true)}]
                   (when @show?
                     [modal-panel
                      :backdrop-on-click #(reset! show? false)
                      :child             
-                     (str "<div>" (md->html help-tpl) "</div>")])]])))
+                     (xform (str "<div>" (md->html help-tpl) "</div>"))])]])))
 
 
 
