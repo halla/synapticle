@@ -7,7 +7,7 @@
             [reagent.core :as reagent :refer [atom]]     
             [re-com.core  :refer [h-box v-box box gap line label checkbox 
                                   radio-button button single-dropdown
-                                  input-textarea
+                                  input-textarea modal-panel
                                   popover-content-wrapper popover-anchor-wrapper]]
             [re-com.util :refer [deref-or-value]]
             [re-frame.core :refer [dispatch-sync
@@ -160,6 +160,22 @@
                  (channels->string @channels) 
                  on-change]])))
 
+(defn help-dlg
+  "Overlay help text"
+  []
+  (let [show? (reagent/atom false)]
+    (fn []
+      [v-box
+       :children [[:span {:label    "Please wait message"
+                          :class    "help glyphicon glyphicon-question-sign"
+                          :on-click #(reset! show? true)}]
+                  (when @show?
+                    [modal-panel
+                     :backdrop-on-click #(reset! show? false)
+                     :child             
+                     (str "<div>" (md->html help-tpl) "</div>")])]])))
+
+
 
 (defn title-input [{:keys [title on-save on-stop]}]
   (let [val (atom title)
@@ -308,9 +324,7 @@
              ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
-             [".help" {:on-click #(dispatch-sync [:toggle-help])}]
-             ["#help" {:style (display? help-visible?)} ]
-             ["#help" :*> (xform ( str "<div>" (md->html help-tpl) "</div>"))]))))
+             ["#control-panel" :*> [:div {:class "form-group"} [help-dlg]] ]))))
 
 (.click (js/jQuery "#screen")
         (fn [evt]
