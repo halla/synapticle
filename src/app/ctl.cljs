@@ -260,10 +260,11 @@
   (xform dataview-tpl
          [".datalist" {:on-drag-over allow-drop
                        :on-drag-enter allow-drop
-                       :on-drop (fn [e] (.preventDefault e)
+                       :on-drop (fn [e]
+                                  (.preventDefault e)
                                   (let [tree (.getData (.-dataTransfer e) "text")]
                                     (dispatch-sync [:import tree @active-channel])))}]
-         [".datalist" [data-items (:items @active-channel) active-channel] ]
+         [".datalist" :* [data-items (:items @active-channel) active-channel] ]
          [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
          [".nav-tabs a" 
           ]
