@@ -291,7 +291,6 @@
         controls (subscribe [:controls])
         active-list-idx (reaction (:active-list-idx @controls))
         dataview-visible? (reaction (:dataview-visible? @controls))
-        help-visible? (reaction (:help-visible? @controls))
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))] 
     (fn []
@@ -324,7 +323,7 @@
              ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
-             ["#control-panel" :*> [:div {:class "form-group"} [help-dlg]] ]))))
+             ["#control-panel .row.navi" :*> [:div {:class "form-group"} [help-dlg]] ]))))
 
 (.click (js/jQuery "#screen")
         (fn [evt]
