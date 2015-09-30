@@ -94,6 +94,12 @@
 (defn delete [vect item]
   (vec (remove (fn [word] (= word item)) vect)))
 
+(defn update-item [vect item text]
+  (let [i (.indexOf (to-array vect) item)]
+    (if (>= i 0)
+      (assoc vect i text)
+      vect)))
+
 (register-handler 
  :delete
  channel-mw
@@ -103,6 +109,14 @@
      (mapv #(if (= % channel)
               (assoc % :items (delete (:items %) item)) 
               %) channels))))
+
+(register-handler 
+ :channel-update-item
+ channel-mw
+ (fn [channels [channel item text]] 
+   (mapv #(if (= % channel)
+            (assoc % :items (update-item (:items %) item text)) 
+            %) channels)))
 
 
 (register-handler 
@@ -122,6 +136,7 @@
    (vec (map #(if (= % (channels channel-i))
                 (assoc % :title value) 
                 %) channels))))
+
 
 
 ;; todo decouple this
@@ -177,4 +192,19 @@
  channel-mw
  (fn [channels [words channel]]    
    (add-words channels words channel)))
+
+
+(defn tree->words [tree]
+  (let [flattened (tree-seq map? #(:children %) tree)]
+    (reduce #(conj %1 %2) [] flattened)))
+
+
+;; TODO get the tree as clojure map from somewhere
+(register-handler
+ :tree-add
+ channel-mw
+ (fn [channels [tree channel]]
+   (let [words (tree->words tree)]   
+     (add-words channels (tree->words tree) channel))))
+
 
