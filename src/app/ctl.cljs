@@ -7,7 +7,7 @@
             [reagent.core :as reagent :refer [atom]]     
             [re-com.core  :refer [h-box v-box box gap line label checkbox 
                                   radio-button button single-dropdown
-                                  input-textarea modal-panel
+                                  input-textarea modal-panel slider
                                   popover-content-wrapper popover-anchor-wrapper]]
             [re-com.util :refer [deref-or-value]]
             [re-frame.core :refer [dispatch-sync
@@ -219,10 +219,12 @@
          [title-edit {:title item
                       :on-save #(dispatch-sync [:channel-update-item @channel item %])
                       :on-stop #(reset! editing false)}]
-         [:span {:on-click #(reset! editing (not @editing))} item]) 
+         [:span {:on-click #(reset! editing (not @editing))
+                 :class "text"} item]) 
        [:button {:class "btn btn-xs"
-                 :on-click #(dispatch-sync [:delete item @channel])} 
-        [:span {:class "glyphicon glyphicon-remove"}]]])))
+                 :on-click #(dispatch-sync [:delete item @channel])}
+
+        [:a {:class "delete"}  "\u274c" ] ]])))
 
 (defn data-items [items channel]
   [:ul        
@@ -286,6 +288,26 @@
                                      :tooltip "Remove all items from all channels"]]
                                [:li [export-dlg channels]])]))
 
+(defn ipm-slider [model]
+  [slider
+   :model     model
+   :min       1
+   :max       400
+   :step      10
+   :class "form-control"
+   :width     "150px"
+   :on-change #(do (dispatch-sync [:set-ipm (str %)])
+                   (dispatch-sync [:start]))
+   :disabled? false])
+
+(defn navbar-view [player]
+  (let [ipm (reaction (* 60  (:items-per-sec @player)))]
+    (list
+     [:div {:class "form-control"}
+      [:label "Speed:"]
+      [ipm-slider ipm]]
+     [:div {:class "form-group"} [help-dlg]])))
+
 (defn control-panel [playstates]
   (let [player (subscribe [:player])
         controls (subscribe [:controls])
@@ -296,6 +318,7 @@
     (fn []
       (xform ctl-tpl 
 
+             
              ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" {:style (display? dataview-visible?)}]
@@ -313,17 +336,11 @@
               {:on-change (fn [e]
                             (dispatch-sync [:set-playmode 
                                             (.-value (.-target e))])
-                            (dispatch-sync [:start]))}]
-             
-             ["#ipm" {:value (Math/floor (* 60  (:items-per-sec @player)))
-                      :on-change (fn [evt] 
-                                   (dispatch-sync [:set-ipm
-                                                   (cljs.reader/read-string (.. evt -target -value ))])
-                                   (dispatch-sync [:start]))}]
+                            (dispatch-sync [:start]))}]             
              ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
                                         ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
-             ["#control-panel .row.navi" :*> [:div {:class "form-group"} [help-dlg]] ]))))
+             ["#control-panel .row.navi" :*> (navbar-view player) ]))))
 
 (.click (js/jQuery "#screen")
         (fn [evt]
