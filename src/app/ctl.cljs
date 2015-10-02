@@ -300,9 +300,22 @@
                    (dispatch-sync [:start]))
    :disabled? false])
 
+(defn playmode-selector [model]
+  [:div {:class "form-group"}
+   (list (doall (for [mode ["drizzle" "pairs" "single"]]
+                  ^{:key mode}
+                  [radio-button 
+                   :label (clojure.string/capitalize mode)
+                   :value mode
+                   :model model
+                   :on-change (fn [e]
+                                (dispatch-sync [:set-playmode mode]))])))])
+
 (defn navbar-view [player]
-  (let [ipm (reaction (* 60  (:items-per-sec @player)))]
+  (let [ipm (reaction (* 60  (:items-per-sec @player)))
+        playmode (reaction (:playmode @player))]
     (list
+     [playmode-selector playmode]
      [:div {:class "form-control"}
       [:label "Speed:"]
       [ipm-slider ipm]]
@@ -316,9 +329,7 @@
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))] 
     (fn []
-      (xform ctl-tpl 
-
-             
+      (xform ctl-tpl             
              ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#dataview" {:style (display? dataview-visible?)}]
@@ -327,20 +338,10 @@
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
              ["#play-state" (playstates (:playstate player))]
 
-             ;; how to refer to the attrs of elements here?
-             ["#playmode input.drizzle" (if (= (:playmode @player) "drizzle") {:checked "true"} {})]
-             ["#playmode input.pairs" (if (= (:playmode @player) "pairs") {:checked "true"} {})]
-             ["#playmode input.single" (if (= (:playmode @player) "single") {:checked "true"} {})]
-                  
-             ["#playmode input" 
-              {:on-change (fn [e]
-                            (dispatch-sync [:set-playmode 
-                                            (.-value (.-target e))])
-                            (dispatch-sync [:start]))}]             
              ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
-                                        ;           ["#doRandomize" {:on-click #(println (.. % -target -checked))}]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
              ["#control-panel .row.navi" :*> (navbar-view player) ]))))
+
 
 (.click (js/jQuery "#screen")
         (fn [evt]
