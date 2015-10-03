@@ -125,6 +125,7 @@
        :position :right-below
        :anchor [button 
                 :label "Import"
+                :class "btn-default btn-sm"
                 :on-click #(reset! showing? true)]
        :popover [popover-body-import showing? :right-below dlg-data on-change]])))
 
@@ -152,6 +153,7 @@
        :position :right-below
        :anchor [button 
                 :label "Export"
+                :class "btn-default btn-sm"
                 :tooltip "Export items from all channels as plain text list"
                 :on-click #(reset! showing? true)]
        :popover [popover-body-export
@@ -268,25 +270,27 @@
                                     (dispatch-sync [:import tree @active-channel])))}]
          [".datalist" :* [data-items (:items @active-channel) active-channel] ]
          [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
-         [".nav-tabs a" 
-          ]
+         [".channels.buttons" :*> (list 
+                                  [:li [export-dlg channels]]
+                                  [:li [button 
+                                     :label "Clear all"
+                                     :class "btn-default btn-sm"
+                                     :on-click #(dispatch-sync [:clear-all])
+                                     :tooltip "Remove all items from all channels"]])]
          ["#channel-controls .channel-mix"  
           {:value (:gain (@channels @active-list-idx))
            :on-change #(dispatch-sync 
                         [:channel-set-mix 
                          (@channels @active-list-idx) 
                          (cljs.reader/read-string (.. % -target -value))])}]
-         [".buttons" :*> (list [:li [import-dlg active-channel]]
-                               [:li [button 
+         ["#channel-controls" :*> (list [:li [import-dlg active-channel]]
+                                        [:li [button 
                                      :label "Clear"
+                                     :class "btn-default btn-sm"
                                      :disabled? false
                                      :on-click #(dispatch-sync [:clear @active-channel])
                                      :tooltip "Remove all items from this channel"]]
-                               [:li [button 
-                                     :label "Clear all"
-                                     :on-click #(dispatch-sync [:clear-all])
-                                     :tooltip "Remove all items from all channels"]]
-                               [:li [export-dlg channels]])]))
+                               )]))
 
 (defn ipm-slider [model]
   [slider

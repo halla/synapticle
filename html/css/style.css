@@ -79,6 +79,12 @@ input[type=range] { min-width: 100px; }
 #dataview .channel-item a { color: #ccc; }
 #dataview .channel-item a:hover { color: #333; text-decoration: none; }
 
+#dataview .channel-mix { font-size: 8px; }
+
+
+#channel-controls { display: flex; }
+.channels.buttons { display: flex; flex-direction: row; }
+
 .item-container { z-index: 100 }
 .item-container { position: absolute; padding: 3px; }
 .item {  max-width: 400px; line-height: 1.15}
