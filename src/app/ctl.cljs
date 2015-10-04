@@ -78,7 +78,7 @@
     "hidden"))
 
 
-(defn data-item 
+(defn channel-item 
   "Single item in single channel. Editable, deletable."
  [item channel]
   (let [editing (atom false)]
@@ -95,10 +95,10 @@
 
         [:a {:class "delete"}  "\u274c" ] ]])))
 
-(defn data-items [items channel]
+(defn channel-items [items channel]
   [:ul        
    (for [item items] 
-     [data-item item channel])])
+     [channel-item item channel])])
 
 (defn channel-title [{:keys [title i channels]}]
   (let [editing (atom false)]
@@ -135,7 +135,7 @@
                                   (.preventDefault e)
                                   (let [tree (.getData (.-dataTransfer e) "text")]
                                     (dispatch-sync [:import tree @active-channel])))}]
-         [".datalist" :* [data-items (:items @active-channel) active-channel] ]
+         [".datalist" :* [channel-items (:items @active-channel) active-channel] ]
          [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
          [".channels.buttons" :*> (list 
                                   [:li [exports/export-dlg channels]]
