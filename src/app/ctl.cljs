@@ -4,7 +4,8 @@
             [cljs.reader]
             [markdown.core :refer [md->html]]
             [cljsjs.mousetrap]
-            [reagent.core :as reagent :refer [atom]]     
+            [app.exports :as exports]
+            [reagent.core :as reagent :refer [atom]]
             [re-com.core  :refer [h-box v-box box gap line label checkbox 
                                   radio-button button single-dropdown
                                   input-textarea modal-panel slider
@@ -52,32 +53,6 @@
                              :class    "btn-primary"]]]]]))
 
 
-(defn export-component-body-func 
-  [submit-dialog cancel-dialog dialog-data]  
-  (fn []
-    [v-box
-     :children [[label
-                 :class "help-text"
-                 :label "Copy paste the tab-indented plain string to your destination of choice."]
-                [gap :size "15px"]
-                (with-meta ;; TODO focus doesn't work
-                  [input-textarea
-                   :model            dialog-data
-                   :width            "100%"
-                   :rows             10
-                   :on-change        #(reset! dialog-data %)
-                   :change-on-blur?  true]
-                  {:component-did-mount #(do (.focus (reagent/dom-node %))
-                                             (.select (reagent/dom-node %)))})
-                [gap :size "20px"]
-                [line]
-                [gap :size "10px"]
-                [h-box
-                 :gap      "10px"
-                 :children [[button
-                             :label    [:span [:i {:class "zmdi zmdi-check" }] "OK"]
-                             :on-click #(submit-dialog @dialog-data)
-                             :class    "btn-primary"]]]]]))
 
 (defn popover-body-import
   [showing? position dialog-data on-change]
@@ -97,22 +72,6 @@
        :body             [(import-component-body-func submit-dialog cancel-dialog dialog-data)]])))
 
 
-(defn popover-body-export
-  [showing? position dialog-data on-change]
-  (let [dialog-data   (reagent/atom (deref-or-value dialog-data))
-        submit-dialog (fn [new-dialog-data]
-                        (reset! showing? false)
-                        (on-change new-dialog-data))
-        cancel-dialog #(reset! showing? false)]
-    (fn []
-      [popover-content-wrapper
-       :showing?         showing?
-       :on-cancel        cancel-dialog
-       :position         position
-       :width            "400px"
-       :backdrop-opacity 0.3
-       :title            "Export all items"
-       :body             [(export-component-body-func submit-dialog cancel-dialog dialog-data)]])))
 
 
 (defn import-dlg [active-channel]
@@ -129,38 +88,8 @@
                 :on-click #(reset! showing? true)]
        :popover [popover-body-import showing? :right-below dlg-data on-change]])))
 
-(defn channels->string 
-  "All items to tab-indented plain string list"
-  [channels]
-  (reduce (fn [%1 %2] (str %1 
-                           (:title %2) 
-                           "\n" 
-                           (reduce #(str %1 "\t" %2 "\n") 
-                                   "" 
-                                   (:items %2)))) 
-          "" 
-          channels))
 
 
-(defn export-dlg 
-  "Export all items from all channels, as tab-indented plain string list"
-  [channels]
-  (let [showing? (atom false)
-        on-change #()]
-    (fn [channels]
-      [popover-anchor-wrapper
-       :showing? showing?
-       :position :right-below
-       :anchor [button 
-                :label "Export"
-                :class "btn-default btn-sm"
-                :tooltip "Export items from all channels as plain text list"
-                :on-click #(reset! showing? true)]
-       :popover [popover-body-export
-                 showing? 
-                 :right-below 
-                 (channels->string @channels) 
-                 on-change]])))
 
 (defn help-dlg
   "Overlay help text"
@@ -271,7 +200,7 @@
          [".datalist" :* [data-items (:items @active-channel) active-channel] ]
          [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
          [".channels.buttons" :*> (list 
-                                  [:li [export-dlg channels]]
+                                  [:li [exports/export-dlg channels]]
                                   [:li [button 
                                      :label "Clear all"
                                      :class "btn-default btn-sm"
@@ -336,6 +265,7 @@
       (xform ctl-tpl             
              ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
+
              ["#dataview" {:style (display? dataview-visible?)}]
              ["#dataview" :*> (dataview active-channel channels active-list-idx)]
 
