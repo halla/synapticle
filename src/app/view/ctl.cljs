@@ -1,11 +1,11 @@
-(ns app.ctl
+(ns app.view.ctl
   (:require [cljs.core.async :refer [put! chan <! mult tap]]
             [dragonmark.web.core :as dw :refer [xf xform to-hiccup to-doc-frag]]
             [cljs.reader]
             [markdown.core :refer [md->html]]
             [cljsjs.mousetrap]
-            [app.imports :as imports]
-            [app.exports :as exports]
+            [app.view.imports :as imports]
+            [app.view.exports :as exports]
             [reagent.core :as reagent :refer [atom]]
             [re-com.core  :refer [h-box v-box box gap line label checkbox 
                                   radio-button button single-dropdown

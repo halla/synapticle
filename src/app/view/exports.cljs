@@ -1,9 +1,10 @@
-(ns app.exports
+(ns app.view.exports
   (:require [re-com.core :refer [h-box v-box box gap line label
                                  button
                                  input-textarea modal-panel
                                  popover-content-wrapper popover-anchor-wrapper]]
             [re-com.util :refer [deref-or-value]]
+            [re-frame.core :refer [dispatch-sync subscribe]]
             [reagent.core :as reagent :refer [atom]]))
 
 

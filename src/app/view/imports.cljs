@@ -1,4 +1,4 @@
-(ns app.imports
+(ns app.view.imports
  (:require [re-com.core :refer [h-box v-box box gap line label
                                  button
                                  input-textarea modal-panel
