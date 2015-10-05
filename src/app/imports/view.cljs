@@ -76,7 +76,7 @@
       (reset! nextword "")
       (dispatch-sync [:insert-mode-disable]))
     (when (= (.-key e) "Enter")
-      (dispatch-sync [:import @active-channel])
+      (dispatch-sync [:import @nextword @active-channel])
       (dispatch-sync [:start])
       (reset! nextword ""))))
 

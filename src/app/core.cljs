@@ -22,8 +22,7 @@
   (reagent/render [ctl/control-panel
                    playerhandlers/playstates ;;todo something
                    ] (.getElementById js/document "controls"))
-  (reagent/render [app.imports.view/textfield-component]
-                  (.getElementById js/document "wordinputs"))
+
   (reagent/render [app.imports.view/textfield-component]
                 (.getElementById js/document "controls-overlay"))
   (reagent/render [views/render-player] (.getElementById js/document "screen"))

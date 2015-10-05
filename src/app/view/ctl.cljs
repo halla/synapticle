@@ -203,6 +203,7 @@
       (xform ctl-tpl             
              ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
+             ["#wordinputs" [app.imports.view/textfield-component]] 
 
              ["#dataview" {:style (display? dataview-visible?)}]
              ["#dataview" :*> (dataview active-channel channels active-list-idx)]
