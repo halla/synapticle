@@ -1,4 +1,9 @@
-(ns app.middleware)
+(ns app.middleware
+  (:require [schema.core :as s :include-macros true]
+            [app.db :as db]
+            [re-frame.core :refer [after path
+                                   trim-v debug]]))
+
 
 ;; re-frame handler middleware 
 
