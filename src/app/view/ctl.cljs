@@ -4,7 +4,7 @@
             [cljs.reader]
             [markdown.core :refer [md->html]]
             [cljsjs.mousetrap]
-            [app.view.imports :as imports]
+            [app.imports.view :as imports]
             [app.view.exports :as exports]
             [reagent.core :as reagent :refer [atom]]
             [re-com.core  :refer [h-box v-box box gap line label checkbox 

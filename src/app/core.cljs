@@ -1,22 +1,18 @@
 (ns app.core
   (:require [reagent.core :as reagent :refer [atom]]
-            [re-frame.core :refer [dispatch-sync]]
-            [app.importer :as importer]
-            [app.datasource :as data]
-            [app.ctl :as ctl]
+            [re-frame.core :refer [dispatch-sync]]     
+            [app.view.ctl :as ctl]
             [app.views :as views]
             [app.handlers :as handlers]
             [app.player.handlers :as playerhandlers]
+            [app.datasource.views]
             [app.subscribables]
             [cljsjs.jquery]))
 
 
+
 (enable-console-print!)
 
-(defn main []
-  "Called on code reload"
-  (dispatch-sync [:start])
-  (println "RELOAD"))
 
 
 (dispatch-sync [:initialize-db])
@@ -26,11 +22,20 @@
   (reagent/render [ctl/control-panel
                    playerhandlers/playstates ;;todo something
                    ] (.getElementById js/document "controls"))
-  (reagent/render [importer/textfield-component]
+  (reagent/render [app.imports.view/textfield-component]
                   (.getElementById js/document "wordinputs"))
-  (reagent/render [importer/textfield-component]
+  (reagent/render [app.imports.view/textfield-component]
                 (.getElementById js/document "controls-overlay"))
-  (reagent/render [views/render-player] (.getElementById js/document "screen")))
+  (reagent/render [views/render-player] (.getElementById js/document "screen"))
+  
+  (reagent/render [app.datasource.views/browser]
+                  (.getElementById js/document "data-browser")))
 
 
 (mount-root)
+
+(defn main []
+  "Called on code reload"
+  (dispatch-sync [:start])
+  (println "RELOAD")
+  (mount-root))

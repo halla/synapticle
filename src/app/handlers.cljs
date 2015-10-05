@@ -4,37 +4,13 @@
                                    trim-v debug]]
             [schema.core :as s :include-macros true]
             [app.db :as db]
+            [app.middleware :refer [controls-mw channel-mw]]
             [app.datasource.db]
-            [app.importer :as importer]
-            [app.ctl :as ctl]
             [app.player.handlers]
+            [app.imports.handler]
 #_            [app.datasource.handlers]
             )) ;;invoke player handlers
 
-
-(defn check-and-throw
-  "throw an exception if db doesn't match the schema."
-  [a-schema db]
-  (if-let [problems  (s/check a-schema db)]
-    (throw (js/Error. (str "schema check failed: " problems)))))
-
-;; after an event handler has run, this middleware can check that
-;; it the value in app-db still correctly matches the schema.
-(def check-schema-mw (after (partial check-and-throw db/schema)))
-
-
-(def ->ls (after db/db->ls!))
-
-
-(def controls-mw [check-schema-mw
-                  ->ls
-                  (path :controls)
-                  trim-v])
-
-(def channel-mw [check-schema-mw
-                 ->ls
-                 (path :channels)
-                 trim-v])
 
 
 ;: -- re-frame style handlers
@@ -174,37 +150,5 @@
    (vec (map #(if (= % channel)
                 (assoc % :muted? (not (:muted? %))) 
                 %) channels))))
-
-
-(defn add-words [channels words channel] 
-  (mapv #(if (= % channel)
-           (assoc % :items (vec (concat (:items %) words))) 
-           %) channels))
-
-(register-handler
- :import
- channel-mw
- (fn [channels [text channel]]
-   (add-words channels (importer/process-input text) channel)))
-
-(register-handler
- :words-add
- channel-mw
- (fn [channels [words channel]]    
-   (add-words channels words channel)))
-
-
-(defn tree->words [tree]
-  (let [flattened (tree-seq map? #(:children %) tree)]
-    (reduce #(conj %1 %2) [] flattened)))
-
-
-;; TODO get the tree as clojure map from somewhere
-(register-handler
- :tree-add
- channel-mw
- (fn [channels [tree channel]]
-   (let [words (tree->words tree)]   
-     (add-words channels (tree->words tree) channel))))
 
 

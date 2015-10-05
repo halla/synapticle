@@ -1,11 +1,12 @@
-(ns app.view.imports
+(ns app.imports.view
  (:require [re-com.core :refer [h-box v-box box gap line label
                                  button
                                  input-textarea modal-panel
                                  popover-content-wrapper popover-anchor-wrapper]]
             [re-com.util :refer [deref-or-value]]
             [re-frame.core :refer [dispatch-sync subscribe]]
-            [reagent.core :as reagent :refer [atom]]))
+            [reagent.core :as reagent :refer [atom]])
+ (:require-macros [reagent.ratom :refer [reaction]]))
 
 (defn import-component-body-func 
   [submit-dialog cancel-dialog dialog-data]  
@@ -67,3 +68,34 @@
                 :class "btn-default btn-sm"
                 :on-click #(reset! showing? true)]
        :popover [popover-body-import showing? :right-below dlg-data on-change]])))
+
+
+(defn keydownhandler [nextword active-channel]
+  (fn [e]
+    (when (= (.-which e) 27) ;esc
+      (reset! nextword "")
+      (dispatch-sync [:insert-mode-disable]))
+    (when (= (.-key e) "Enter")
+      (dispatch-sync [:import @active-channel])
+      (dispatch-sync [:start])
+      (reset! nextword ""))))
+
+
+(defn textfield-component []
+  (let [controls (subscribe [:controls]) 
+        active-list-idx (reaction (:active-list-idx @controls))
+        channels (subscribe [:channels])        
+        active-channel (reaction (@channels @active-list-idx))
+        nextword (atom "")
+        get-class (fn [insert-mode?]
+                    (if insert-mode?
+                      "form-control insert-mode"
+                      "form-control"))]
+    (fn []
+      [:input {:type "text" 
+               :value @nextword
+               :placeholder (str "Add item to " (:title @active-channel))
+               :class (get-class (:insert-mode? @controls))
+               :on-change #(reset! nextword (-> % .-target .-value))
+               :auto-focus true
+               :on-key-down (keydownhandler nextword active-channel)}])))
