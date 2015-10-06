@@ -192,7 +192,7 @@
       [ipm-slider ipm]]
      [:div {:class "form-group"} [help-dlg]])))
 
-(defn control-panel [playstates]
+(defn control-panel []
   (let [player (subscribe [:player])
         controls (subscribe [:controls])
         active-list-idx (reaction (:active-list-idx @controls))
@@ -201,7 +201,7 @@
         active-channel (reaction (@channels @active-list-idx))] 
     (fn []
       (xform ctl-tpl             
-             ["#control-panel" {:class (clojure.string/lower-case (playstates (:playstate @player)))}]
+             ["#control-panel" {:class (name (:playstate @player))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#wordinputs" [app.imports.view/textfield-component]] 
 
@@ -209,7 +209,6 @@
              ["#dataview" :*> (dataview active-channel channels active-list-idx)]
 
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
-             ["#play-state" (playstates (:playstate player))]
 
              ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
              ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]

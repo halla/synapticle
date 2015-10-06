@@ -26,9 +26,6 @@
 (def screen-mw [check-schema-mw
                 trim-v])
 
-(def playstates {:stopped "Stopped"
-                 :running "Running"})
-
 (def playmodes {"drizzle" drizzle/drizzle
                 "pairs" pairs/pairs
                 "single" players/single})
@@ -54,7 +51,7 @@
                                             interval-anim)
                           :playstate :running}})))
 
-(register-handler 
+(register-handler
  :start 
  [trim-v]
  start)

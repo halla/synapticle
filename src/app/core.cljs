@@ -1,5 +1,5 @@
 (ns app.core
-  (:require [reagent.core :as reagent :refer [atom]]
+  (:require [reagent.core :as reagent]
             [re-frame.core :refer [dispatch-sync]]     
             [app.view.ctl :as ctl]
             [app.views :as views]
@@ -19,13 +19,14 @@
 
 
 (defn mount-root []
-  (reagent/render [ctl/control-panel
-                   playerhandlers/playstates ;;todo something
-                   ] (.getElementById js/document "controls"))
+  (reagent/render [ctl/control-panel] 
+                  (.getElementById js/document "controls"))
 
   (reagent/render [app.imports.view/textfield-component]
-                (.getElementById js/document "controls-overlay"))
-  (reagent/render [views/render-player] (.getElementById js/document "screen"))
+                  (.getElementById js/document "controls-overlay"))
+
+  (reagent/render [views/render-player] 
+                  (.getElementById js/document "screen"))
   
   (reagent/render [app.datasource.views/browser]
                   (.getElementById js/document "data-browser")))
