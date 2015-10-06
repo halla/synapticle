@@ -1,23 +1,14 @@
 (ns app.player.handlers
   (:require [re-frame.core :refer [trim-v after register-handler path
-                                   dispatch-sync]]
-            [app.db :as db]
+                                   dispatch-sync]]           
+            [app.middleware :refer [check-schema-mw]]
             [app.player.player :as player]
             [app.player.drizzle :as drizzle]
             [app.player.pairs :as pairs]
             [app.player.players :as players]  
-            [app.player.screen :as screen]
-            [schema.core :as s :include-macros true]))
+            [app.player.screen :as screen]))
 
 
-(defn check-and-throw
-  "throw an exception if db doesn't match the schema."
-  [a-schema db]
-  (if-let [problems  (s/check a-schema db)]
-    (throw (js/Error. (str "schema check failed: " problems)))))
-
-
-(def check-schema-mw (after (partial check-and-throw db/schema))) ;; todo share with main handler
 
 (def player-mw [check-schema-mw
                 (path :player)
