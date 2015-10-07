@@ -63,30 +63,30 @@
    (for [item items] 
      [channel-item item channel])])
 
-(defn channel-title [{:keys [title i channels]}]
+(defn channel-title [{:keys [title channel]}]
   (let [editing (atom false)]
-    (fn [{:keys [title i channels]}]
-      [:a {:data-idx i
-           :on-click #(dispatch-sync [:set-active-channel i])
-           :on-double-click #(reset! editing (not @editing))}
+    (fn [{:keys [title channel]}]
+      [:a {:on-double-click #(reset! editing (not @editing))}
        (if @editing
-         [title-edit {:title (:title (@channels i))
-                       :on-save #(dispatch-sync [:channel-set-title i %])
+         [title-edit {:title (:title @channel)
+                       :on-save #(dispatch-sync [:channel-set-title @channel %])
                        :on-stop #(reset! editing false)}]
-         [:span {:class (str "view" @editing)} (:title (@channels i))])])))
+         [:span {:class (str "view" @editing)} (:title @channel)])])))
 
-(defn data-tab-item [channels active-idx]
-  (let [data @channels]
-    (for [i (range (count data))] 
-      [:div {:class (str "muted-" (:muted? (data i)) (when (= active-idx i) " active"))}
-       [channel-title {:title (:title (@channels i))
-                       :i i
-                       :channels channels}]
-       [:span {:class (str "glyphicon " (if (:muted? (data i)) "glyphicon-volume-off" "glyphicon-volume-up")) 
-               :aria-hidden "true"
-               :on-click #(dispatch-sync [:mute (data i)])} ]])))
 
-(defn mix-slider [channel]  
+(defn channel-header 
+  "Title and controls"
+  [channel]
+  [:div {:class (str "muted-" (:muted? @channel))}
+   [channel-title {:title (:title @channel)
+                   :channel channel}]
+   [:span {:class (str "glyphicon " (if (:muted? @channel) "glyphicon-volume-off" "glyphicon-volume-up")) 
+           :aria-hidden "true"
+           :on-click #(dispatch-sync [:mute @channel])} ]])
+
+(defn mix-slider 
+  "Channel mix/gain"
+  [channel]  
   [slider
    :model     (reaction  (:gain @channel))
    :min       0
@@ -98,9 +98,11 @@
                    (dispatch-sync [:start]))
    :disabled? false])
 
-(defn channel-controls [channel]
+(defn channel-controls 
+  "Control widgets for a channel"
+  [channel]
   [:ul {:class "list-unstyled"}
-   [:li [mix-slider channel] ]
+   [:li {:class "mix-slider"}  [mix-slider channel] ]
    [:li {:class "list-unstyled"} [imports/import-dlg channel]]
    [:li {:class "list-unstyled"}
     [button 
@@ -110,27 +112,28 @@
          :on-click #(dispatch-sync [:clear @channel])
          :tooltip "Remove all items from this channel"]]])
 
-(defn channel-view [channels idx]
+(defn channel-view 
+  "Single channel"
+  [channels idx active-idx]
   (let [channel (reaction (@channels idx))]
-    (fn [channels idx]
-      [:li {:class "channel list-unstyled"}
-       [:div {:class "channel-title"} (:title @channel)]
+    (fn [channels idx active-idx]
+      [:li {:class (str "channel list-unstyled" (when (= @active-idx idx) " active"))
+            :on-click #(dispatch-sync [:set-active-channel @active-idx])
+            :on-drag-over allow-drop
+            :on-drag-enter allow-drop
+            :on-drop (fn [e]
+                       (.preventDefault e)
+                       (let [tree (.getData (.-dataTransfer e) "text")]
+                         (dispatch-sync [:import tree @channel])))}
+       [:div {:class "channel-header"} [channel-header channel]]
        [:div {:class "channel-controls"} [channel-controls channel]]
        [:div {:class "channel-items"} (channel-items (:items @channel) channel)]])))
 
 (defn dataview [active-channel channels active-list-idx]
   "Editing channels and data"
   (xform dataview-tpl
-         [".datalist" {:on-drag-over allow-drop
-                       :on-drag-enter allow-drop
-                       :on-drop (fn [e]
-                                  (.preventDefault e)
-                                  (let [tree (.getData (.-dataTransfer e) "text")]
-                                    (dispatch-sync [:import tree @active-channel])))}]
-         [".datalist" :* [channel-items (:items @active-channel) active-channel] ]
-         [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
          ["#channels" :*> (for [idx (range (count @channels))] 
-                            [channel-view channels idx])]
+                            [channel-view channels idx active-list-idx])]
          [".channels.buttons" :*> (list 
                                   [:li [exports/export-dlg channels]]
                                   [:li [button 
@@ -138,12 +141,7 @@
                                      :class "btn-default btn-sm"
                                      :on-click #(dispatch-sync [:clear-all])
                                      :tooltip "Remove all items from all channels"]])]
-         ["#channel-controls .channel-mix"  
-          {:value (:gain (@channels @active-list-idx))
-           :on-change #(dispatch-sync 
-                        [:channel-set-mix 
-                         (@channels @active-list-idx) 
-                         (cljs.reader/read-string (.. % -target -value))])}]
+
          ["#channel-controls" :*> (list [:li [imports/import-dlg active-channel]]
                                         [:li [button 
                                      :label "Clear"

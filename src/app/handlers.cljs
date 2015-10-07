@@ -1,8 +1,7 @@
 (ns app.handlers
   (:require [re-frame.core :refer [register-handler 
                                    after path
-                                   trim-v debug]]
-            [schema.core :as s :include-macros true]
+                                   trim-v debug]]      
             [app.db :as db]
             [app.middleware :refer [controls-mw channel-mw]]
             [app.datasource.db]
@@ -108,8 +107,8 @@
  :channel-set-title
  channel-mw
  (fn 
-   [channels [channel-i value]] 
-   (vec (map #(if (= % (channels channel-i))
+   [channels [channel value]] 
+   (vec (map #(if (= % channel)
                 (assoc % :title value) 
                 %) channels))))
 

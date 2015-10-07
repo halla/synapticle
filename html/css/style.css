@@ -90,6 +90,8 @@ ul#channels ul.channel { }
 .channel-controls ul { display: flex; flex-wrap: wrap;}
 .channels.buttons { display: flex; flex-direction: row; }
 
+.channel-controls .mix-slider input { font-size: 8px}
+
 .item-container { z-index: 100 }
 .item-container { position: absolute; padding: 3px; }
 .item {  max-width: 400px; line-height: 1.15}
