@@ -59,7 +59,7 @@
         [:a {:class "delete"}  "\u274c" ] ]])))
 
 (defn channel-items [items channel]
-  [:ul        
+  [:ul {:class "list-unstyled channel"} 
    (for [item items] 
      [channel-item item channel])])
 
@@ -86,6 +86,38 @@
                :aria-hidden "true"
                :on-click #(dispatch-sync [:mute (data i)])} ]])))
 
+(defn mix-slider [channel]  
+  [slider
+   :model     (reaction  (:gain @channel))
+   :min       0
+   :max       1.0
+   :step      0.1
+   :class "form-control"
+   :width     "100px"
+   :on-change #(do (dispatch-sync [:channel-set-mix @channel (float %)])
+                   (dispatch-sync [:start]))
+   :disabled? false])
+
+(defn channel-controls [channel]
+  [:ul {:class "list-unstyled"}
+   [:li [mix-slider channel] ]
+   [:li {:class "list-unstyled"} [imports/import-dlg channel]]
+   [:li {:class "list-unstyled"}
+    [button 
+         :label "Clear"
+         :class "btn-default btn-sm"
+         :disabled? false
+         :on-click #(dispatch-sync [:clear @channel])
+         :tooltip "Remove all items from this channel"]]])
+
+(defn channel-view [channels idx]
+  (let [channel (reaction (@channels idx))]
+    (fn [channels idx]
+      [:li {:class "channel list-unstyled"}
+       [:div {:class "channel-title"} (:title @channel)]
+       [:div {:class "channel-controls"} [channel-controls channel]]
+       [:div {:class "channel-items"} (channel-items (:items @channel) channel)]])))
+
 (defn dataview [active-channel channels active-list-idx]
   "Editing channels and data"
   (xform dataview-tpl
@@ -97,6 +129,8 @@
                                     (dispatch-sync [:import tree @active-channel])))}]
          [".datalist" :* [channel-items (:items @active-channel) active-channel] ]
          [".nav-tabs li" :* (data-tab-item channels @active-list-idx) ]
+         ["#channels" :*> (for [idx (range (count @channels))] 
+                            [channel-view channels idx])]
          [".channels.buttons" :*> (list 
                                   [:li [exports/export-dlg channels]]
                                   [:li [button 

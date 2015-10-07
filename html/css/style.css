@@ -46,7 +46,7 @@ input[type=range] { min-width: 100px; }
 
 
 
-#controls { margin-bottom:0; }
+#controls { margin-bottom:0; width: 100% }
 #control-panel.running .glyphicon-play { color: #bbb; }
 #control-panel.running .glyphicon-pause { color: #000; }
 #control-panel.stopped .glyphicon-play { color: #000; }
@@ -81,8 +81,13 @@ input[type=range] { min-width: 100px; }
 
 #dataview .channel-mix { font-size: 8px; }
 
+ul#channels  { display: flex; height: 300px; overflow: hidden;}
+ul#channels > li { margin: 0 auto; margin: 0px auto; overflow-y: scroll;
+width: 150px;}
+ul#channels ul.channel { }
 
-#channel-controls { display: flex; }
+
+.channel-controls ul { display: flex; flex-wrap: wrap;}
 .channels.buttons { display: flex; flex-direction: row; }
 
 .item-container { z-index: 100 }
