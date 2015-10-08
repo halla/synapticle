@@ -5,13 +5,13 @@
   src: local('Open Sans'), local('OpenSans'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2'), url(http://fonts.gstatic.com/s/opensans/v13/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
 }
 
-body { font-size: 15px; font-family: 'Roboto', 'Helvetica', sans-serif; overflow: hidden; }
+body { font-size: 14px; font-family: 'Roboto', 'Helvetica', sans-serif; overflow: hidden; line-height: 1.2 }
 
 h2 { font-size: 19px }
 h3 { font-size: 17px }
 
 
-input[type=range] { min-width: 100px; }
+input[type=range] { min-width: 50px; }
 
 #screen {  position:relative; overflow: hidden; height:100%; background-color: #ffe; z-index: 0; }
 
@@ -70,10 +70,11 @@ input[type=range] { min-width: 100px; }
 #textareaimport { height: 300px; width: 500px; }
 #fileupload-panel { display: none;}
 
-
+/* Channels */
 
 #dataview .datalist { max-height: 300px; overflow-y: scroll; }
-#dataview .channel-item .text { padding: 1px 5px}
+#dataview .channel-item { padding: 3px 5px; border-bottom: 1px solid #ddd;
+}
 #dataview .channel-item .btn { background: none;}
 
 #dataview .channel-item a { color: #ccc; }
@@ -81,16 +82,23 @@ input[type=range] { min-width: 100px; }
 
 #dataview .channel-mix { font-size: 8px; }
 
+#channel-panel { border: 1px solid #ddd; padding: 10px }
+.channel-header { padding: 5px; 
+                  border-top: 1px solid #ccc; 
+                  border-bottom: 1px solid #ccc; margin-bottom: 5px; }
+
+.channel-header .glyphicon { margin: 0 0 0 10px; }
 ul#channels  { display: flex; height: 300px; overflow: hidden;}
 ul#channels > li { margin: 0 auto; margin: 0px auto; overflow-y: scroll;
-width: 150px;}
-ul#channels ul.channel { }
-
+width: 200px;}
+ul#channels li.channel { padding: 3px }
+ul#channels li.channel.active { background: #eee; }
+ul#channels li.channel.muted { color: #999; }
 
 .channel-controls ul { display: flex; flex-wrap: wrap;}
 .channels.buttons { display: flex; flex-direction: row; }
 
-.channel-controls .mix-slider input { font-size: 8px}
+.channel-controls .mix-slider input { font-size: 8px; height: 15px; background:none; border; none;}
 
 .item-container { z-index: 100 }
 .item-container { position: absolute; padding: 3px; }

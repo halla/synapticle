@@ -66,7 +66,7 @@
 (defn channel-title [{:keys [title channel]}]
   (let [editing (atom false)]
     (fn [{:keys [title channel]}]
-      [:a {:on-double-click #(reset! editing (not @editing))}
+      [:span {:on-double-click #(reset! editing (not @editing))}
        (if @editing
          [title-edit {:title (:title @channel)
                        :on-save #(dispatch-sync [:channel-set-title @channel %])
@@ -77,7 +77,7 @@
 (defn channel-header 
   "Title and controls"
   [channel]
-  [:div {:class (str "muted-" (:muted? @channel))}
+  [:div {:class ""}
    [channel-title {:title (:title @channel)
                    :channel channel}]
    [:span {:class (str "glyphicon " (if (:muted? @channel) "glyphicon-volume-off" "glyphicon-volume-up")) 
@@ -93,7 +93,7 @@
    :max       1.0
    :step      0.1
    :class "form-control"
-   :width     "100px"
+   :width     "30px"
    :on-change #(do (dispatch-sync [:channel-set-mix @channel (float %)])
                    (dispatch-sync [:start]))
    :disabled? false])
@@ -117,8 +117,10 @@
   [channels idx active-idx]
   (let [channel (reaction (@channels idx))]
     (fn [channels idx active-idx]
-      [:li {:class (str "channel list-unstyled" (when (= @active-idx idx) " active"))
-            :on-click #(dispatch-sync [:set-active-channel @active-idx])
+      [:li {:class (str "channel list-unstyled" 
+                        (when (= @active-idx idx) " active")
+                        (when (:muted? @channel) " muted"))
+            :on-click #(dispatch-sync [:set-active-channel idx])
             :on-drag-over allow-drop
             :on-drag-enter allow-drop
             :on-drop (fn [e]
