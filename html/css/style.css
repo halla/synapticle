@@ -72,20 +72,22 @@ input[type=range] { min-width: 50px; }
 
 /* Channels */
 
-#dataview .datalist { max-height: 300px; overflow-y: scroll; }
-#dataview .channel-item { padding: 3px 5px; border-bottom: 1px solid #ddd;
+#channel-editor .datalist { max-height: 300px; overflow-y: scroll; }
+#channel-editor .channel-item { padding: 3px 5px; border-bottom: 1px solid #ddd;
 }
-#dataview .channel-item .btn { background: none;}
+#channel-editor .channel-item .btn { background: none;}
 
-#dataview .channel-item a { color: #ccc; }
-#dataview .channel-item a:hover { color: #333; text-decoration: none; }
+#channel-editor .channel-item a { color: #ccc; }
+#channel-editor .channel-item a:hover { color: #333; text-decoration: none; }
 
-#dataview .channel-mix { font-size: 8px; }
+#channel-editor .channel-mix { font-size: 8px; }
 
 #channel-panel { border: 1px solid #ddd; padding: 10px }
 .channel-header { padding: 5px; 
                   border-top: 1px solid #ccc; 
-                  border-bottom: 1px solid #ccc; margin-bottom: 5px; }
+                  border-bottom: 1px solid #ccc;
+                  margin-bottom: 5px; 
+                  letter-spacing: 0.06em; }
 
 .channel-header .glyphicon { margin: 0 0 0 10px; }
 ul#channels  { display: flex; height: 300px; overflow: hidden;}
@@ -98,7 +100,7 @@ ul#channels li.channel.muted { color: #999; }
 .channel-controls ul { display: flex; flex-wrap: wrap;}
 .channels.buttons { display: flex; flex-direction: row; }
 
-.channel-controls .mix-slider input { font-size: 8px; height: 15px; background:none; border; none;}
+.channel-controls .mix-slider input { font-size: 8px; height: 30px; background:none; border; none;}
 
 .item-container { z-index: 100 }
 .item-container { position: absolute; padding: 3px; }

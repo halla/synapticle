@@ -41,10 +41,6 @@
                      :child             
                      (xform (str "<div>" (md->html help-tpl) "</div>"))])]])))
 
-
-
-
-
 (defn display? [visible?]
   (if @visible?
     "display: block;"
@@ -54,9 +50,6 @@
   (if visible?
     ""
     "hidden"))
-
-
-
 
 (defn ipm-slider [model]
   [slider
@@ -93,24 +86,18 @@
 
 (defn control-panel []
   (let [player (subscribe [:player])
-        controls (subscribe [:controls])
-        active-list-idx (reaction (:active-list-idx @controls))
-        dataview-visible? (reaction (:dataview-visible? @controls))
-        channels (subscribe [:channels])
-        active-channel (reaction (@channels @active-list-idx))] 
+        controls (subscribe [:controls])] 
     (fn []
       (xform ctl-tpl             
              ["#control-panel" {:class (name (:playstate @player))}]
              ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
              ["#wordinputs" [app.imports.view/textfield-component]] 
 
-             ["#dataview" {:style (display? dataview-visible?)}]
-             ["#dataview" :*> (channels/dataview active-channel channels active-list-idx)]
-
              ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
 
              ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
-             ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize (.. % -target -checked)])}]
+             ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize 
+                                                         (.. % -target -checked)])}]
              ["#control-panel .row.navi" :*> (navbar-view player) ]))))
 
 

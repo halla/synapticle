@@ -152,3 +152,13 @@
                                      :on-click #(dispatch-sync [:clear @active-channel])
                                      :tooltip "Remove all items from this channel"]]
                                )]))
+
+(defn channel-editor []
+  (let [controls (subscribe [:controls])
+        active-list-idx (reaction (:active-list-idx @controls))
+        dataview-visible? (reaction (:dataview-visible? @controls))
+        channels (subscribe [:channels])
+        active-channel (reaction (@channels @active-list-idx))]
+    (fn []
+      (when @dataview-visible?
+        (dataview active-channel channels active-list-idx)))))
