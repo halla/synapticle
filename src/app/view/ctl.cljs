@@ -4,8 +4,7 @@
             [cljs.reader]
             [markdown.core :refer [md->html]]
             [cljsjs.mousetrap]
-            [app.imports.view :as imports]
-            [app.channels.view :as channels]        
+            [app.imports.view :as imports]       
             [reagent.core :as reagent :refer [atom]]
             [re-com.core  :refer [h-box v-box box gap line label checkbox 
                                   radio-button button single-dropdown
@@ -79,7 +78,7 @@
         playmode (reaction (:playmode @player))]
     (list
      [playmode-selector playmode]
-     [:div {:class "form-control"}
+     [:div {:class "form-group"}
       [:label "Speed:"]
       [ipm-slider ipm]]
      [:div {:class "form-group"} [help-dlg]])))
