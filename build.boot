@@ -1,11 +1,12 @@
 (set-env!
  :source-paths   #{"src"}
  :resource-paths #{"html"}
- :dependencies '[[adzerk/boot-cljs      "1.7.48-3" :scope "test"]
-                 [adzerk/boot-cljs-repl "0.1.9" :scope "test"]
-                 [adzerk/boot-reload    "0.3.2"      :scope "test"]
+ :dependencies '[[adzerk/boot-cljs      "1.7.48-5" :scope "test"]
+                 [adzerk/boot-cljs-repl "0.2.0" :scope "test"]
+                 [adzerk/boot-reload    "0.4.0"      :scope "test"]
+
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [prismatic/schema "1.0.0"]
+                 [prismatic/schema "1.0.1"]
                  [reagent "0.5.1"]
                  [re-frame "0.4.1"]
                  [re-com "0.6.2"]
@@ -22,7 +23,7 @@
 
 (require
  '[adzerk.boot-cljs      :refer [cljs]]
- '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
+ '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl repl-env]]
  '[boot-cljs-test.node-runner :refer :all]
  '[adzerk.boot-reload    :refer [reload]]
  '[pandeiro.boot-http         :refer [serve]])
