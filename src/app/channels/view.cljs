@@ -127,8 +127,9 @@
                        (.preventDefault e)
                        (let [tree (.getData (.-dataTransfer e) "text")]
                          (dispatch-sync [:import tree @channel])))}
-       [:div {:class "channel-header"} [channel-header channel]]
-       [:div {:class "channel-controls"} [channel-controls channel]]
+       [:div {:class "channel-header"} [channel-header channel]
+        [:div {:class "channel-controls"} [channel-controls channel]]]
+
        [:div {:class "channel-items"} (channel-items (:items @channel) channel)]])))
 
 (defn dataview [active-channel channels active-list-idx]

@@ -75,6 +75,7 @@ input[type=range] { min-width: 50px; }
 /* Channels */
 
 #channel-editor .datalist { max-height: 300px; overflow-y: scroll; }
+#channel-editor .channel-items { margin-top: 70px; }
 #channel-editor .channel-item { padding: 3px 5px; border-bottom: 1px solid #ddd;
 }
 #channel-editor .channel-item .btn { background: none;}
@@ -89,16 +90,20 @@ input[type=range] { min-width: 50px; }
                   border-top: 1px solid #ccc; 
                   border-bottom: 1px solid #ccc;
                   margin-bottom: 5px; 
-                  letter-spacing: 0.06em; }
+                  letter-spacing: 0.06em; 
+                position: fixed; 
+                background: white; 
+                width: 180px;}
 
 .channel-header .glyphicon { margin: 0 0 0 10px; }
 ul#channels  { display: flex; height: 300px; overflow: hidden;}
 ul#channels > li { margin: 0 auto; margin: 0px auto; overflow-y: scroll;
 width: 200px;}
-ul#channels li.channel { padding: 3px }
+ul#channels li.channel { padding: 0px }
 ul#channels li.channel.active { background: #eee; }
 ul#channels li.channel.muted { color: #999; }
 
+.channel-controls { margin-top: 5px; }
 .channel-controls ul { display: flex; flex-wrap: wrap;}
 .channels.buttons { display: flex; flex-direction: row; }
 
