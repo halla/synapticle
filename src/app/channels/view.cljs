@@ -130,7 +130,9 @@
        [:div {:class "channel-header"} [channel-header channel]
         [:div {:class "channel-controls"} [channel-controls channel]]]
 
-       [:div {:class "channel-items"} (channel-items (:items @channel) channel)]])))
+       [:div {:class "channel-items"} (channel-items (:items @channel) channel)]
+       (when (= idx @active-idx)
+         [app.imports.view/textfield-component channel])])))
 
 (defn dataview [active-channel channels active-list-idx]
   "Editing channels and data"

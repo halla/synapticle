@@ -81,21 +81,25 @@
       (reset! nextword ""))))
 
 
-(defn textfield-component []
-  (let [controls (subscribe [:controls]) 
-        active-list-idx (reaction (:active-list-idx @controls))
-        channels (subscribe [:channels])        
-        active-channel (reaction (@channels @active-list-idx))
-        nextword (atom "")
-        get-class (fn [insert-mode?]
-                    (if insert-mode?
-                      "form-control insert-mode"
-                      "form-control"))]
-    (fn []
-      [:input {:type "text" 
-               :value @nextword
-               :placeholder (str "Add item to " (:title @active-channel))
-               :class (get-class (:insert-mode? @controls))
-               :on-change #(reset! nextword (-> % .-target .-value))
-               :auto-focus true
-               :on-key-down (keydownhandler nextword active-channel)}])))
+(defn textfield-component 
+  ([] 
+   (let [controls (subscribe [:controls]) 
+         active-list-idx (reaction (:active-list-idx @controls))
+         channels (subscribe [:channels])   
+         active-channel (reaction (@channels @active-list-idx))]
+     [textfield-component active-channel]))
+  ([active-channel] 
+   (let [controls (subscribe [:controls]) 
+         nextword (atom "")
+         get-class (fn [insert-mode?]
+                     (if insert-mode?
+                       "form-control insert-mode"
+                       "form-control"))]
+     (fn []
+       [:input {:type "text" 
+                :value @nextword
+                :placeholder (str "Add item to " (:title @active-channel))
+                :class (get-class (:insert-mode? @controls))
+                :on-change #(reset! nextword (-> % .-target .-value))
+                :auto-focus true
+                :on-key-down (keydownhandler nextword active-channel)}]))))
