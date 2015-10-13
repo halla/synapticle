@@ -40,15 +40,6 @@
                      :child             
                      (xform (str "<div>" (md->html help-tpl) "</div>"))])]])))
 
-(defn display? [visible?]
-  (if @visible?
-    "display: block;"
-    "display: none;"))
-
-(defn visibility-class [visible?]
-  (if visible?
-    ""
-    "hidden"))
 
 (defn ipm-slider [model]
   [slider
