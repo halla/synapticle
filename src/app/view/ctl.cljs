@@ -72,32 +72,41 @@
      [:div {:class "form-group"}
       [:label "Speed:"]
       [ipm-slider ipm]]
-     [:div {:class "form-group"} [help-dlg]])))
+
+     [:div {:class "form-group"} 
+      [:span {:class "glyphicon glyphicon-fullscreen"
+              :on-click #(dispatch-sync [:toggle-distraction-free-mode])}]]
+     [:div {:class "form-group"}
+      [help-dlg]])))
 
 (defn control-panel []
   (let [player (subscribe [:player])
-        controls (subscribe [:controls])] 
-    (fn []
-      (xform ctl-tpl             
-             ["#control-panel" {:class (name (:playstate @player))}]
-             ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
-             ["#wordinputs" [app.imports.view/textfield-component]] 
+        controls (subscribe [:controls])
+        distraction-free? (reaction (:distraction-free-mode? @controls))] 
+ 
+   (fn []
+      (when @distraction-free?
+        (xform ctl-tpl             
+               ["#control-panel" {:class (name (:playstate @player))}]
+               ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
+               ["#wordinputs" [app.imports.view/textfield-component]] 
 
-             ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
+               ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
 
-             ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
-             ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize 
-                                                         (.. % -target -checked)])}]
-             ["#control-panel .row.navi" :*> (navbar-view player) ]))))
+               ["#doRandomize" (if (:randomize? @player) {:checked "true"} {})]
+               ["#doRandomize" {:on-click #(dispatch-sync [:set-randomize 
+                                                           (.. % -target -checked)])}]
+               ["#control-panel .row.navi" :*> (navbar-view player) ])))))
 
 
 (.click (js/jQuery "#screen")
         (fn [evt]
-          (.toggle (js/jQuery "nav"))))
+          (dispatch-sync [:toggle-distraction-free-mode])))
+
 
 (.click (js/jQuery "#controls-overlay")
         (fn [evt]
-          (.toggle (js/jQuery "nav"))))
+          (dispatch-sync [:toggle-distraction-free-mode])))
 
 
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
