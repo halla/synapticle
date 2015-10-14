@@ -4,6 +4,7 @@
             [schema.core :as s :include-macros true]))
 
 (def schema {:controls {:dataview-visible? s/Bool
+                        :distraction-free-mode? s/Bool
                         :import-visible? s/Bool
                         :help-visible? s/Bool
                         :active-list-idx s/Int
@@ -15,6 +16,7 @@
                       :animation-timer s/Int
                       :items-per-sec s/Num}
              :channels [{:title s/Str
+                         :id s/Str
                          :items [s/Str]
                          :gain s/Num
                          :muted? s/Bool}]
@@ -37,10 +39,12 @@
    :animation-timer 0
    :items-per-sec 2.0 })
 
+
 (def defaults-controls 
   {:dataview-visible? true
    :import-visible? false
    :help-visible? false
+   :distraction-free-mode? false
    :active-list-idx 0
    :insert-mode? false})
 
@@ -55,6 +59,7 @@
 
 (def defaults-channels 
   [{:title "List 1"
+    :id "chan1"
     :items ["Collide ideas"
             "Review your notes" 
             "Generate random associations" 
@@ -68,24 +73,29 @@
     :gain 0.7
     :muted? false}
    {:title "List 2"
+    :id "chan2"
     :items []
     :gain 0.7
     :muted? false}
    {:title "List 3"
+    :id "chan3"
     :items []
     :gain 0.7
     :muted? false}
    {:title "List 4"
+    :id "chan4"
     :items []
     :gain 0.7
     :muted? false}
    {:title "Expand"
+    :id "chan5"
     :items ["imagine" 
             "possible"
             "future"]
     :gain 0.3
     :muted? false}
    {:title "Questions"
+    :id "chan6"
     :items ["What if?" "What else?"]
     :gain 0.2
     :muted? false}])

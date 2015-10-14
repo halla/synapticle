@@ -36,6 +36,12 @@
  (fn [db _] (update-in db [:import-visible?] #(not %))))
 
 (register-handler 
+ :toggle-distraction-free-mode 
+ [controls-mw]
+ (fn [db _] (update-in db [:distraction-free-mode?] #(not %))))
+
+
+(register-handler 
  :set-active-channel 
  controls-mw
  (fn [db [idx]]  (assoc-in db [:active-list-idx] idx) ))
