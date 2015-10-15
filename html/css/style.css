@@ -72,10 +72,22 @@ input[type=range] { min-width: 50px; }
 #textareaimport { height: 300px; width: 500px; }
 #fileupload-panel { display: none;}
 
+
+/* bootstrap overrides */
+
+.btn-group-sm > .btn, .btn-sm {
+    padding: 3px 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+.navbar { margin-bottom: 0; }
+
 /* Channels */
 
 #channel-editor .datalist { max-height: 300px; overflow-y: scroll; }
-#channel-editor .channel-items { margin-top: 70px; }
+#channel-editor .channel-items { margin-top: 70px; margin-bottom:15px }
 #channel-editor .channel-item { padding: 3px 5px; border-bottom: 1px solid #ddd;
 }
 #channel-editor .channel-item .btn { background: none;}
@@ -85,7 +97,7 @@ input[type=range] { min-width: 50px; }
 
 #channel-editor .channel-mix { font-size: 8px; }
 
-#channel-panel { border: 1px solid #ddd; padding: 10px }
+#channel-editor .dataview-content { border: 1px solid #ddd; padding: 10px }
 .channel-header { padding: 5px; 
                   border-top: 1px solid #ccc; 
                   border-bottom: 1px solid #ccc;
@@ -93,21 +105,21 @@ input[type=range] { min-width: 50px; }
                   letter-spacing: 0.06em; 
                 position: fixed; 
                 background: white; 
-                width: 180px;}
+                width: 200px;}
 
 .channel-header .glyphicon { margin: 0 0 0 10px; }
 ul#channels  { display: flex; height: 300px; overflow: hidden;}
 ul#channels > li { margin: 0 auto; margin: 0px auto; overflow-y: scroll;
-width: 200px;}
-ul#channels li.channel { padding: 0px }
+width: 220px; }
+ul#channels li.channel { }
 ul#channels li.channel.active { background: #eee; }
 ul#channels li.channel.muted { color: #999; }
-
+ul#channels li.channel input[type=text] { margin: 15px 0 }
 .channel-controls { margin-top: 5px; }
 .channel-controls ul { display: flex; flex-wrap: wrap;}
 .channels.buttons { display: flex; flex-direction: row; }
 
-.channel-controls .mix-slider input { font-size: 8px; height: 30px; background:none; border; none;}
+.channel-controls .mix-slider input { font-size: 8px; height: 26px; padding: 3px 8px; background:none;  }
 
 .item-container { z-index: 100 }
 .item-container { position: absolute; padding: 3px; }
