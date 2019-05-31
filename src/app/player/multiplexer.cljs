@@ -1,4 +1,5 @@
 (ns app.player.multiplexer)
+(enable-console-print!)
 
 (defn get-next-source [sources]
   "Probability of selection based on source mix-level"
@@ -17,7 +18,7 @@
     rnd-item))
 
 (defn get-item-from-all [sources]
-  "First concatenates, then picks."
+  "Concatenate all sources to a single set. Pick a random item."
   (let [items (vec (reduce #(concat %1 (:items %2)) [] sources))
         rnd-item (items (rand-int (count items)))]
     rnd-item))
@@ -31,3 +32,12 @@
           (if (= item1 item2)
             (recur (dec trials))
             [item1 item2]))))))
+
+(defn get-item-from-each [sources]  
+  (let [active-sources (filter #(not (or (:muted? %)
+                                         (= 0 (count (:items %))))) sources)]
+    (map (fn [x] {:channel_id (:id x)
+                  :text (rand-nth (:items x))}) active-sources)))
+
+
+    

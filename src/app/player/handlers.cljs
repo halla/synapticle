@@ -5,6 +5,7 @@
             [app.player.player :as player]
             [app.player.drizzle :as drizzle]
             [app.player.pairs :as pairs]
+            [app.player.grid :as grid]
             [app.player.players :as players]  
             [app.player.screen :as screen]))
 
@@ -19,7 +20,9 @@
 
 (def playmodes {"drizzle" drizzle/drizzle
                 "pairs" pairs/pairs
-                "single" players/single})
+                "single" players/single
+                "grid" grid/grid
+                })
 
 (defn get-player [mode channels] ; runs on every animation frame?  
   ((playmodes mode) channels screen/divs))

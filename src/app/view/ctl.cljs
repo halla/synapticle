@@ -55,7 +55,7 @@
 
 (defn playmode-selector [model]
   [:div {:class "form-group"}
-   (list (doall (for [mode ["drizzle" "pairs" "single"]]
+   (list (doall (for [mode ["drizzle" "pairs" "single" "grid"]]
                   ^{:key mode}
                   [radio-button 
                    :label (clojure.string/capitalize mode)
