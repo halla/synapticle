@@ -85,7 +85,7 @@
         distraction-free? (reaction (:distraction-free-mode? @controls))] 
  
    (fn []
-      (when @distraction-free?
+      (when (not @distraction-free?)
         (xform ctl-tpl             
                ["#control-panel" {:class (name (:playstate @player))}]
                ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]

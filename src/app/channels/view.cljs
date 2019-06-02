@@ -160,8 +160,9 @@
   (let [controls (subscribe [:controls])
         active-list-idx (reaction (:active-list-idx @controls))
         dataview-visible? (reaction (:dataview-visible? @controls))
+        distraction-free? (reaction (:distraction-free-mode? @controls))
         channels (subscribe [:channels])
         active-channel (reaction (@channels @active-list-idx))]
     (fn []
-      (when @dataview-visible?
+      (when (and @dataview-visible? (not @distraction-free?))
         (dataview active-channel channels active-list-idx)))))
