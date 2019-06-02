@@ -89,6 +89,7 @@
         (xform ctl-tpl             
                ["#control-panel" {:class (name (:playstate @player))}]
                ["#playbutton" {:on-click #(dispatch-sync [:toggle-play])} ]
+               ["#stepbutton" {:on-click #(dispatch-sync [:step])}]
                ["#wordinputs" [app.imports.view/textfield-component]] 
 
                ["#ejectbutton" {:on-click #(dispatch-sync [:toggle-dataview-visibility])} ]
@@ -112,4 +113,5 @@
 (.bind js/Mousetrap "space" #(dispatch-sync [:toggle-play]))
 (.bind js/Mousetrap "i" #(dispatch-sync [:insert-mode-enable]))
 (.bind js/Mousetrap "esc" #(dispatch-sync [:insert-mode-disable]))
+(.bind js/Mousetrap "right" #(dispatch-sync [:step]))
 
