@@ -135,7 +135,7 @@ ul#channels li.channel input[type=text] { margin: 15px 0 }
 .pairs .panel.first { text-align: right; }
 .pairs .panel.second { text-align: left; }
 
-.grid { display: flex; max-width: 60em; font-size: 2rem; margin: 5em auto;}
-.grid-item { margin: 2ex 4em}
+.grid { display: flex; flex-wrap: wrap; max-width: 40em; font-size: 2rem; margin: 5em auto;}
+.grid-item { width: 10em; height: 5ex; text-align: center; padding: 1ex 1em; border: 1px solid #eee; }
 
 #data-browser { clear: both; overflow: hidden; }
